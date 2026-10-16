@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload & Admin - Ruhban Abdullah</title>
+  <meta name="description" content="Upload content or manage files and notes.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <p class="links" style="margin-bottom: 16px;">
+        &larr; <a href="index.html">Back to Home</a>
+      </p>
+      <h1>Upload Content</h1>
+      <p class="subtitle">Content Intake &amp; File Storage</p>
+      <p class="intro">
+        Add a text note, attach a file, or send both together. Files are stored in Cloudflare R2
+        and text entries are saved in MongoDB via the backend API.
+      </p>
+    </header>
+
+    <hr>
+
+    <!-- Upload Section -->
+    <section id="upload-section">
+      <h2>New Upload</h2>
+      <form id="upload-form">
+        <div class="form-group">
+          <label for="upload-text">Text Note (optional):</label>
+          <textarea id="upload-text" rows="5" maxlength="10000" placeholder="Write something to save with this upload..."></textarea>
+          <div id="char-count" class="char-counter">0 / 10,000</div>
+        </div>
+
+        <div class="form-group">
+          <label for="upload-file">Attach File (optional, max 10 MB):</label>
+          <input type="file" id="upload-file">
+          <p id="file-info" class="meta" style="margin-top: 4px; display: none;"></p>
+        </div>
+
+        <div id="upload-status" class="status-box" style="display: none;"></div>
+
+        <button type="submit" id="upload-submit-btn">Upload Content</button>
+      </form>
+    </section>
+
+    <hr>
+
+    <!-- Admin Section -->
+    <section id="admin-section">
+      <div class="admin-header">
+        <div>
+          <h2>Upload Admin</h2>
+          <p class="meta" style="margin-bottom: 0;">Review or remove uploaded text entries and stored files.</p>
+        </div>
+        <div id="admin-auth-controls" style="display: none;">
+          <button type="button" id="admin-refresh-btn" class="btn-secondary" style="padding: 5px 12px; font-size: 0.85rem;">Refresh</button>
+          <button type="button" id="admin-signout-btn" class="btn-secondary" style="padding: 5px 12px; font-size: 0.85rem;">Sign Out</button>
+        </div>
+      </div>
+
+      <!-- Login Form (Shown when token is not present) -->
+      <div id="admin-login-view">
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label for="admin-token-input">Admin Secret Token:</label>
+            <input type="password" id="admin-token-input" placeholder="Enter admin token..." required autocomplete="current-password">
+          </div>
+          <div id="admin-login-status" class="status-box" style="display: none;"></div>
+          <button type="submit" id="admin-login-btn">Access Admin Area</button>
+        </form>
+      </div>
+
+      <!-- Dashboard View (Shown when token is present) -->
+      <div id="admin-dashboard-view" style="display: none;">
+        <div id="admin-dashboard-status" class="status-box" style="display: none;"></div>
+        <div id="admin-uploads-list">
+          <p class="meta">Loading uploads...</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <hr>
+      <p class="meta">&copy; Ruhban Abdullah. Plain HTML &amp; CSS.</p>
+    </footer>
+  </main>
+
+  <script src="upload.js"></script>
+</body>
+</html>
