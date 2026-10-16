@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const adminAuthControls = document.getElementById("admin-auth-controls");
   const adminRefreshBtn = document.getElementById("admin-refresh-btn");
   const adminSignoutBtn = document.getElementById("admin-signout-btn");
+  const adminContactsList = document.getElementById("admin-contacts-list");
   const adminUploadsList = document.getElementById("admin-uploads-list");
 
   // Character counter
@@ -114,9 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
         charCount.textContent = "0 / 10,000";
         fileInfo.style.display = "none";
 
-        // If admin is active, refresh the list
+        // If admin is active, refresh uploads list
         if (getAdminToken()) {
-          loadAdminUploads();
+          loadAdminData();
         }
       } catch (err) {
         showStatus(uploadStatus, err.message || "Failed to reach the upload API.", "error");
@@ -147,12 +148,13 @@ document.addEventListener("DOMContentLoaded", () => {
       adminLoginView.style.display = "none";
       adminDashboardView.style.display = "block";
       adminAuthControls.style.display = "block";
-      loadAdminUploads();
+      loadAdminData();
     } else {
       adminLoginView.style.display = "block";
       adminDashboardView.style.display = "none";
       adminAuthControls.style.display = "none";
-      adminUploadsList.innerHTML = "";
+      if (adminContactsList) adminContactsList.innerHTML = "";
+      if (adminUploadsList) adminUploadsList.innerHTML = "";
     }
   }
 
@@ -181,23 +183,121 @@ document.addEventListener("DOMContentLoaded", () => {
   // Admin refresh handler
   if (adminRefreshBtn) {
     adminRefreshBtn.addEventListener("click", () => {
-      loadAdminUploads();
+      loadAdminData();
     });
   }
 
-  // Load Admin Uploads from API
-  async function loadAdminUploads() {
+  // Load both contacts and uploads
+  function loadAdminData() {
+    loadAdminContacts();
+    loadAdminUploads();
+  }
+
+  // --- 1. Load Admin Contacts ---
+  async function loadAdminContacts() {
+    const token = getAdminToken();
+    if (!token || !adminContactsList) return;
+
+    adminContactsList.innerHTML = `<p class="meta">Loading contact messages...</p>`;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/contacts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        setAdminToken("");
+        syncAdminUI();
+        showStatus(adminLoginStatus, "Admin session expired or token is invalid.", "error");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || `Error fetching contacts (Status ${response.status})`);
+      }
+
+      renderContacts(data.contacts || []);
+    } catch (err) {
+      adminContactsList.innerHTML = `<p class="meta" style="color: #991b1b;">Failed to load contacts: ${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  function renderContacts(items) {
+    if (!adminContactsList) return;
+
+    if (!items || items.length === 0) {
+      adminContactsList.innerHTML = `<p class="meta">No contact messages received yet.</p>`;
+      return;
+    }
+
+    adminContactsList.innerHTML = "";
+
+    items.forEach((item) => {
+      const card = document.createElement("article");
+      card.className = "admin-record";
+      card.id = `contact-${item._id}`;
+
+      card.innerHTML = `
+        <div class="record-top">
+          <span><strong>${escapeHtml(item.name)}</strong> &bull; <a href="mailto:${encodeURIComponent(item.email)}">${escapeHtml(item.email)}</a> &bull; ${formatDate(item.createdAt)}</span>
+          <button type="button" class="btn-danger" data-contact-id="${item._id}">Delete</button>
+        </div>
+        <div class="meta" style="margin-bottom: 6px;"><strong>Subject:</strong> ${escapeHtml(item.subject || "No subject")}</div>
+        <div class="record-text">${escapeHtml(item.message)}</div>
+      `;
+
+      const deleteBtn = card.querySelector("button[data-contact-id]");
+      if (deleteBtn) {
+        deleteBtn.addEventListener("click", () => deleteContact(item._id));
+      }
+
+      adminContactsList.appendChild(card);
+    });
+  }
+
+  async function deleteContact(id) {
+    if (!confirm("Are you sure you want to delete this contact message?")) {
+      return;
+    }
+
     const token = getAdminToken();
     if (!token) return;
 
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/contacts/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || `Failed to delete (Status ${response.status})`);
+      }
+
+      const card = document.getElementById(`contact-${id}`);
+      if (card) card.remove();
+
+      if (adminContactsList.children.length === 0) {
+        adminContactsList.innerHTML = `<p class="meta">No contact messages received yet.</p>`;
+      }
+    } catch (err) {
+      alert("Could not delete contact message: " + err.message);
+    }
+  }
+
+  // --- 2. Load Admin Uploads ---
+  async function loadAdminUploads() {
+    const token = getAdminToken();
+    if (!token || !adminUploadsList) return;
+
     adminUploadsList.innerHTML = `<p class="meta">Loading uploads...</p>`;
-    hideStatus(adminDashboardStatus);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/uploads`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
@@ -213,16 +313,15 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.message || `Error fetching uploads (Status ${response.status})`);
       }
 
-      const uploads = data.uploads || [];
-      renderUploads(uploads);
+      renderUploads(data.uploads || []);
     } catch (err) {
-      adminUploadsList.innerHTML = "";
-      showStatus(adminDashboardStatus, err.message || "Failed to load uploads from server.", "error");
+      adminUploadsList.innerHTML = `<p class="meta" style="color: #991b1b;">Failed to load uploads: ${escapeHtml(err.message)}</p>`;
     }
   }
 
-  // Render uploads list
   function renderUploads(items) {
+    if (!adminUploadsList) return;
+
     if (!items || items.length === 0) {
       adminUploadsList.innerHTML = `<p class="meta">No uploads found.</p>`;
       return;
@@ -266,18 +365,16 @@ document.addEventListener("DOMContentLoaded", () => {
         ${fileHtml}
       `;
 
-      // Attach delete event
       const deleteBtn = card.querySelector("button[data-id]");
       if (deleteBtn) {
-        deleteBtn.addEventListener("click", () => deleteRecord(item._id));
+        deleteBtn.addEventListener("click", () => deleteUpload(item._id));
       }
 
       adminUploadsList.appendChild(card);
     });
   }
 
-  // Delete an upload
-  async function deleteRecord(id) {
+  async function deleteUpload(id) {
     if (!confirm("Are you sure you want to delete this upload and its file permanently?")) {
       return;
     }
@@ -285,14 +382,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const token = getAdminToken();
     if (!token) return;
 
-    hideStatus(adminDashboardStatus);
-
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/uploads/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
@@ -301,21 +394,18 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.message || `Failed to delete (Status ${response.status})`);
       }
 
-      // Remove from DOM
       const card = document.getElementById(`record-${id}`);
-      if (card) {
-        card.remove();
-      }
+      if (card) card.remove();
 
       if (adminUploadsList.children.length === 0) {
         adminUploadsList.innerHTML = `<p class="meta">No uploads found.</p>`;
       }
     } catch (err) {
-      showStatus(adminDashboardStatus, err.message || "Could not delete upload.", "error");
+      alert("Could not delete upload: " + err.message);
     }
   }
 
-  // Helper status functions
+  // --- Helper Status Functions ---
   function showStatus(element, text, type) {
     if (!element) return;
     element.textContent = text;
