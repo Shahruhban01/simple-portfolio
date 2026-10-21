@@ -13,6 +13,9 @@
     <header>
       <div class="header-top">
         <h1>Ruhban Abdullah</h1>
+        <button id="hire-me-game-btn" class="hire-me-pill" type="button" title="Play the 'Hire Me' Arcade Game!">
+          <span>Hire Me</span> <span style="font-size: 1rem;">🎮</span>
+        </button>
       </div>
       <p class="subtitle">Software Engineer | Backend Developer</p>
       <p class="intro">
@@ -26,7 +29,8 @@
         <a href="#projects">Projects</a> &bull;
         <a href="#experience">Experience</a> &bull;
         <a href="#education">Education</a> &bull;
-        <a href="#contact">Contact</a>
+        <a href="#contact">Contact</a> &bull;
+        <a href="#game" id="hire-me-link" style="color: #f43f5e; font-weight: 700;">Hire Me 🎮</a>
         <!-- <a href="upload.html">Upload</a> &bull; -->
       </nav>
 
@@ -328,6 +332,7 @@
         <div class="shortcut-row"><span>Command Palette</span> <span><span class="kbd-hint">Ctrl + K</span> or <span class="kbd-hint">/</span></span></div>
         <div class="shortcut-row"><span>Toggle Terminal</span> <span><span class="kbd-hint">`</span></span></div>
         <div class="shortcut-row"><span>Toggle Theme</span> <span><span class="kbd-hint">T</span></span></div>
+        <div class="shortcut-row"><span>Hire Me Arcade Game</span> <span><span class="kbd-hint">🎮</span> Hire Me</span></div>
         <div class="shortcut-row"><span>Customization Playground</span> <span><span class="kbd-hint">✦</span> Customize</span></div>
         <div class="shortcut-row"><span>Show Shortcuts</span> <span><span class="kbd-hint">?</span></span></div>
         <div class="shortcut-row"><span>Jump to Projects</span> <span><span class="kbd-hint">G</span> then <span class="kbd-hint">P</span></span></div>
@@ -341,6 +346,154 @@
     </div>
   </div>
 
+  <!-- 'Hire Me' Arcade Game Modal -->
+  <div id="game-overlay" class="game-backdrop" hidden role="dialog" aria-modal="true" aria-label="Hire Me Arcade Game">
+    <div class="arcade-cabinet" id="arcade-cabinet">
+      <!-- Arcade Top Bar -->
+      <div class="arcade-topbar">
+        <div class="arcade-player-stat">
+          <span class="pixel-avatar">🧑‍💻</span>
+          <span style="font-weight: 700; color: #facc15;">Ruhban</span>
+          <span id="game-lives" class="game-hearts" title="Lives">❤️❤️❤️</span>
+        </div>
+        <div class="arcade-level-info">
+          <div class="arcade-level-badge" id="game-level-text">Level 1: The ATS Screening 🤖</div>
+          <div class="arcade-progress-bar">
+            <div id="game-progress-fill" class="arcade-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+        <div class="arcade-score-box">
+          <span style="color: #94a3b8; font-size: 0.8rem;">SCORE:</span>
+          <span id="game-score" class="arcade-score-num">0</span>
+        </div>
+        <button type="button" id="game-close-btn" class="arcade-close-btn" title="Exit Game (Esc)">✕</button>
+      </div>
+
+      <!-- Arcade Content Columns -->
+      <div class="arcade-grid">
+        <!-- Left: The Story So Far -->
+        <aside class="arcade-card story-card">
+          <div class="card-pin">📌</div>
+          <h3 class="story-title">The Story So Far...</h3>
+          <ul class="story-list">
+            <li><span>💻 Built real projects</span> <span class="story-check">✓</span></li>
+            <li><span>⚙️ Learned new skills</span> <span class="story-check">✓</span></li>
+            <li><span>📨 Applied to 2000+ jobs</span> <span class="story-check">✓</span></li>
+            <li><span>✉️ Sent countless emails</span> <span class="story-check">✓</span></li>
+            <li><span>⏳ Waited... and waited...</span> <span class="story-check">⌛</span></li>
+            <li><span>🥺 Still waiting for interview...</span> <span class="story-check">⏳</span></li>
+          </ul>
+          <div class="story-speech-bubble">
+            "I keep building, learning and improving... but somehow still not getting even an interview 🥺"
+          </div>
+        </aside>
+
+        <!-- Center: Game Canvas -->
+        <main class="arcade-canvas-wrapper" id="canvas-wrapper">
+          <canvas id="game-canvas" width="460" height="420"></canvas>
+          
+          <!-- Canvas Overlay for Start / Pause / Game Over / Victory -->
+          <div id="game-screen-overlay" class="game-screen-overlay">
+            <div id="game-start-screen" class="game-screen-card">
+              <div class="pixel-logo">The Hiring Game 💼</div>
+              <p class="pixel-sub">Help Ruhban battle through recruiter obstacles and reach the Job Offer!</p>
+              <div class="obstacle-preview">
+                <span class="badge-sample">"No Response"</span>
+                <span class="badge-sample">"Auto Rejection"</span>
+                <span class="badge-sample">"Not a Fit"</span>
+                <span class="badge-sample">"Ghosted 👻"</span>
+              </div>
+              <button type="button" id="game-start-btn" class="arcade-primary-btn">Start Game 🚀</button>
+              <p class="meta-keys">Press <kbd>Space</kbd> or Click to Start</p>
+            </div>
+
+            <div id="game-over-screen" class="game-screen-card" style="display: none;">
+              <div class="pixel-logo" style="color: #f87171;">Application Rejected! 💔</div>
+              <p class="pixel-sub" id="game-over-reason">Hit by an Auto-Rejection Bot!</p>
+              <div class="game-stats-row">
+                <span>Score: <strong id="game-over-score">0</strong></span>
+                <span>Applications: <strong id="game-over-apps">0</strong></span>
+              </div>
+              <p style="font-size: 0.8rem; color: #cbd5e1; margin: 10px 0;">
+                "Don't worry, in real life Ruhban never gives up — he pushed 3 more commits to GitHub today!"
+              </p>
+              <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" id="game-restart-btn" class="arcade-primary-btn">Try Again 🔄</button>
+                <button type="button" id="game-hire-now-btn" class="arcade-cta-btn">Hire Ruhban Directly 🎯</button>
+              </div>
+            </div>
+
+            <div id="game-victory-screen" class="game-screen-card" style="display: none;">
+              <div class="pixel-logo" style="color: #4ade80;">🎉 JOB OFFER UNLOCKED! 🎉</div>
+              <p class="pixel-sub">You helped Ruhban cut through the ATS noise and score the dream role!</p>
+              <div class="victory-box">
+                <div style="font-size: 1.05rem; font-weight: 700; color: #facc15; margin-bottom: 6px;">
+                  🏆 You Made a Great Choice!
+                </div>
+                <p style="font-size: 0.82rem; line-height: 1.5; color: #e2e8f0; margin-bottom: 12px;">
+                  "Recruiter unlocked Ruhban: +100% Scalable Architectures, +40% Faster API Responses, 100% Clean Code, 0% Corporate Drama."
+                </p>
+                <div class="cta-actions">
+                  <a href="#contact" id="victory-contact-btn" class="arcade-cta-btn" style="text-decoration:none;">Contact Ruhban Now ✉️</a>
+                  <a href="https://drive.google.com/file/d/1G7nWg2vVoF8bwFJ-woYvTk1OGQL6r1G4/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="arcade-secondary-btn">View Resume (PDF) 📄</a>
+                  <button type="button" id="victory-copy-email-btn" class="arcade-secondary-btn">Copy Email 📋</button>
+                </div>
+              </div>
+              <button type="button" id="victory-replay-btn" class="arcade-subtle-btn" style="margin-top: 10px;">Play Again 🔄</button>
+            </div>
+          </div>
+
+          <!-- Mobile Touch Controls -->
+          <div class="touch-controls" id="touch-controls">
+            <button type="button" id="touch-left" class="touch-btn" aria-label="Move Left">◀</button>
+            <button type="button" id="touch-shoot" class="touch-btn touch-btn-shoot" aria-label="Shoot">🚀 Shoot</button>
+            <button type="button" id="touch-right" class="touch-btn" aria-label="Move Right">▶</button>
+          </div>
+        </main>
+
+        <!-- Right: Why Hire Me & CTA -->
+        <aside class="arcade-card why-card">
+          <h3 class="why-title">⭐ Why Hire Me?</h3>
+          <ul class="why-list">
+            <li><span class="why-check">✅</span> <strong>Backend & Distributed Systems</strong></li>
+            <li><span class="why-check">✅</span> <strong>Builds & ships real projects</strong></li>
+            <li><span class="why-check">✅</span> <strong>High Concurrency:</strong> WebSockets, MySQL</li>
+            <li><span class="why-check">✅</span> <strong>AWS Cloud & DevOps:</strong> EC2, S3, R2</li>
+            <li><span class="why-check">✅</span> <strong>Problem solver & fast learner</strong></li>
+            <li><span class="why-check">✅</span> <strong>Passionate about reliable software</strong></li>
+          </ul>
+
+          <div class="why-bubble">
+            <div class="why-avatar">🙋</div>
+            <div>
+              <div style="font-weight: 700; color: #facc15; font-size: 0.8rem;">You're Missing Out on a Good One! ✨</div>
+              <div style="font-size: 0.72rem; color: #cbd5e1;">He's always a solid fit, learns fast, and gets things done.</div>
+            </div>
+          </div>
+
+          <!-- Giant SELECT MEEEEE Button -->
+          <button type="button" id="select-me-btn" class="select-me-giant-btn" title="Hire Ruhban Abdullah!">
+            SELECT MEEEEE! 🎯
+          </button>
+          <p class="select-me-sub">Hire me and let's build something amazing together! 🚀</p>
+        </aside>
+      </div>
+
+      <!-- Bottom Arcade Controls & Tips Bar -->
+      <div class="arcade-bottom-bar">
+        <div class="arcade-instructions">
+          <span><span class="arcade-key">←</span> <span class="arcade-key">→</span> Move</span>
+          <span><span class="arcade-key">Space</span> Shoot</span>
+          <span><span class="arcade-key">P</span> Pause</span>
+          <span><span class="arcade-key">R</span> Restart</span>
+        </div>
+        <div class="arcade-sound-controls">
+          <button type="button" id="game-sound-btn" class="arcade-sound-btn" title="Toggle 8-bit Sound FX">🔊 Sound ON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
@@ -351,5 +504,6 @@
   <script src="js/drag-drop.js"></script>
   <script src="js/resize.js"></script>
   <script src="js/editor.js"></script>
+  <script src="js/hire-game.js"></script>
 </body>
 </html>

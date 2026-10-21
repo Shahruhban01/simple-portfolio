@@ -459,6 +459,15 @@ document.addEventListener("DOMContentLoaded", () => {
       action: () => navigateToSection("contact"),
     },
     {
+      id: "game",
+      title: "Play 'Hire Me' Arcade Game",
+      desc: "Shoot down job rejections and reach the job offer 🎮",
+      category: "Arcade",
+      action: () => {
+        if (window.HireMeGame) window.HireMeGame.open();
+      },
+    },
+    {
       id: "customize",
       title: "Interactive Customization Playground",
       desc: "Drag, resize, reorder sections, and customize live styling",
@@ -739,6 +748,7 @@ Available commands:
   <span class="cmd-success">github</span>         Display GitHub profile and live repository metrics
   <span class="cmd-success">resume</span>         Open official resume PDF in a new tab
   <span class="cmd-success">customize</span>      Launch interactive drag &amp; drop layout playground
+  <span class="cmd-success">game</span>           Play the "Hire Me" retro arcade mini-game 🎮
   <span class="cmd-success">theme</span>          Change theme (<span class="cmd-meta">theme light</span>, <span class="cmd-meta">theme dark</span>, <span class="cmd-meta">theme toggle</span>)
   <span class="cmd-success">whoami</span>         Print current session identity
   <span class="cmd-success">date</span>           Print current date and time
@@ -861,6 +871,18 @@ Tip: Use <span class="cmd-meta">resume</span> to view PDF resume.
         window.PortfolioEditor.Controller.enterCustomization();
       }
       return `<span class="cmd-success">Interactive playground activated.</span>`;
+    },
+
+    game: () => {
+      closeTerminal();
+      if (window.HireMeGame) window.HireMeGame.open();
+      return `<span class="cmd-success">Launching "Hire Me" Arcade Game...</span>`;
+    },
+
+    hireme: () => {
+      closeTerminal();
+      if (window.HireMeGame) window.HireMeGame.open();
+      return `<span class="cmd-success">Launching "Hire Me" Arcade Game...</span>`;
     },
 
     theme: (args) => {
