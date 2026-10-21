@@ -5,18 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ruhban Abdullah - Backend Developer</title>
   <meta name="description" content="Personal portfolio of Ruhban Abdullah, Backend Engineer specializing in scalable backend systems, REST APIs, and cloud infrastructure.">
+  <meta name="theme-color" content="#ffffff" id="meta-theme-color">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="container">
     <header>
-      <h1>Ruhban Abdullah</h1>
+      <div class="header-top">
+        <h1>Ruhban Abdullah</h1>
+      </div>
       <p class="subtitle">Software Engineer | Backend Developer</p>
       <p class="intro">
         Backend Engineer specializing in scalable backend systems, REST APIs, real-time architectures,
         and cloud infrastructure using Node.js, Express.js, MySQL, MongoDB, and AWS.
       </p>
-      <nav class="links">
+      <nav class="links" aria-label="Section Links">
         <a href="https://drive.google.com/file/d/1G7nWg2vVoF8bwFJ-woYvTk1OGQL6r1G4/view?usp=sharing" target="_blank" rel="noopener noreferrer">Resume (PDF)</a> &bull;
         <a href="#about">About</a> &bull;
         <a href="#skills">Skills</a> &bull;
@@ -26,6 +29,13 @@
         <a href="#contact">Contact</a>
         <!-- <a href="upload.html">Upload</a> &bull; -->
       </nav>
+
+      <div class="nav-toolbar" aria-label="Developer Tools">
+        <button id="palette-btn" class="toolbar-btn" type="button" title="Open Command Palette (Ctrl+K or /)"><span class="kbd-hint">⌘K</span> Commands</button>
+        <button id="terminal-btn" class="toolbar-btn" type="button" title="Toggle Developer Terminal (`)"><span class="kbd-hint">`</span> Terminal</button>
+        <button id="theme-btn" class="toolbar-btn" type="button" title="Toggle Theme (T)"><span id="theme-icon">◐</span> <span id="theme-label">Theme</span></button>
+        <button id="shortcuts-btn" class="toolbar-btn" type="button" title="Keyboard Shortcuts (?)"><span class="kbd-hint">?</span> Shortcuts</button>
+      </div>
     </header>
 
     <hr>
@@ -63,49 +73,89 @@
     <section id="projects">
       <h2>Projects</h2>
       
-      <article class="item">
-        <h3>VaultX — Personal Digital Vault Platform</h3>
-        <p>
-          Enterprise-grade personal digital vault designed for secure storage and instant access to identity documents,
-          cards, notes, certificates, and medical records. Features biometric authentication, encrypted document
-          management, secure sharing, and chunked large-file uploads.
-        </p>
-        <p class="meta">Technologies: Flutter, React.js, Node.js, MongoDB Atlas, Cloudflare R2, JWT, REST APIs</p>
-        <p class="links">
-          <a href="https://github.com/Shahruhban01/PersonalDocVault" target="_blank" rel="noopener noreferrer">GitHub Repository</a> |
-          <a href="https://vault.developerruhban.online/" target="_blank" rel="noopener noreferrer">Live Demo</a>
-        </p>
-      </article>
+      <!-- Smart Project Explorer Controls -->
+      <div class="project-controls">
+        <div class="project-search-wrapper">
+          <input type="text" id="project-search" class="project-search-input" placeholder="Search projects by name, keyword, or tech... (or press /)" autocomplete="off">
+          <button type="button" id="project-search-clear" class="project-search-clear" title="Clear search" aria-label="Clear search">&times;</button>
+        </div>
+        <div class="filter-tags" id="project-filter-tags" role="toolbar" aria-label="Technology filters">
+          <button type="button" class="filter-tag active" data-filter="all">All</button>
+          <button type="button" class="filter-tag" data-filter="node.js">Node.js</button>
+          <button type="button" class="filter-tag" data-filter="express.js">Express.js</button>
+          <button type="button" class="filter-tag" data-filter="mysql">MySQL</button>
+          <button type="button" class="filter-tag" data-filter="mongodb">MongoDB</button>
+          <button type="button" class="filter-tag" data-filter="aws">AWS</button>
+          <button type="button" class="filter-tag" data-filter="websockets">WebSockets</button>
+          <button type="button" class="filter-tag" data-filter="flutter">Flutter</button>
+        </div>
+        <div class="project-stats-bar">
+          <span id="project-count-text">Showing 4 of 4 featured projects</span>
+          <button type="button" id="project-reset-btn" class="btn-action" style="display: none;">Reset filters</button>
+        </div>
+      </div>
 
-      <article class="item">
-        <h3>WOW'S — Real-Time Live Streaming Platform</h3>
-        <p>
-          Scalable real-time social entertainment platform with live broadcasting, virtual gifting, real-time comments,
-          audio streaming, and a coin economy. Migrated architecture from Firebase to a custom AWS and MySQL backend
-          to support high concurrency.
-        </p>
-        <p class="meta">Technologies: Flutter, PHP (CodeIgniter), MySQL, AWS S3, WebSockets, Agora RTC, REST APIs</p>
-      </article>
+      <div id="project-items-list">
+        <article class="item project-item" id="project-vaultx" data-title="VaultX — Personal Digital Vault Platform" data-tags="flutter,react.js,node.js,mongodb,mongodb atlas,cloudflare r2,jwt,rest apis,security" data-desc="Enterprise-grade personal digital vault designed for secure storage and instant access to identity documents, cards, notes, certificates, and medical records. Features biometric authentication, encrypted document management, secure sharing, and chunked large-file uploads.">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+            <h3>VaultX — Personal Digital Vault Platform</h3>
+            <button type="button" class="btn-action copy-project-btn" data-id="project-vaultx" title="Copy link to VaultX project">Copy Link</button>
+          </div>
+          <p>
+            Enterprise-grade personal digital vault designed for secure storage and instant access to identity documents,
+            cards, notes, certificates, and medical records. Features biometric authentication, encrypted document
+            management, secure sharing, and chunked large-file uploads.
+          </p>
+          <p class="meta">Technologies: Flutter, React.js, Node.js, MongoDB Atlas, Cloudflare R2, JWT, REST APIs</p>
+          <p class="links">
+            <a href="https://github.com/Shahruhban01/PersonalDocVault" target="_blank" rel="noopener noreferrer">GitHub Repository</a> |
+            <a href="https://vault.developerruhban.online/" target="_blank" rel="noopener noreferrer">Live Demo</a>
+          </p>
+        </article>
 
-      <article class="item">
-        <h3>piCloud — Cloud Storage & File Management System</h3>
-        <p>
-          Distributed cloud storage and file management platform focused on scalable file uploads, role-based access
-          control, storage optimization, and secure media handling.
-        </p>
-        <p class="meta">Technologies: Node.js, Express.js, MongoDB, AWS S3, REST APIs</p>
-      </article>
+        <article class="item project-item" id="project-wows" data-title="WOW'S — Real-Time Live Streaming Platform" data-tags="flutter,php,codeigniter,mysql,aws,aws s3,websockets,agora rtc,rest apis,streaming" data-desc="Scalable real-time social entertainment platform with live broadcasting, virtual gifting, real-time comments, audio streaming, and a coin economy. Migrated architecture from Firebase to a custom AWS and MySQL backend to support high concurrency.">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+            <h3>WOW'S — Real-Time Live Streaming Platform</h3>
+            <button type="button" class="btn-action copy-project-btn" data-id="project-wows" title="Copy link to WOW'S project">Copy Link</button>
+          </div>
+          <p>
+            Scalable real-time social entertainment platform with live broadcasting, virtual gifting, real-time comments,
+            audio streaming, and a coin economy. Migrated architecture from Firebase to a custom AWS and MySQL backend
+            to support high concurrency.
+          </p>
+          <p class="meta">Technologies: Flutter, PHP (CodeIgniter), MySQL, AWS S3, WebSockets, Agora RTC, REST APIs</p>
+        </article>
 
-      <article class="item">
-        <h3>Private Queue & Operations Management Platform</h3>
-        <p>
-          Real-time queue orchestration and operations management system engineered with deterministic queue behavior,
-          dynamic wait-time calculations, concurrency safeguards, and RBAC infrastructure.
-        </p>
-        <p class="meta">Technologies: Node.js, Express.js, MongoDB, MySQL, WebSockets, RBAC</p>
-      </article>
+        <article class="item project-item" id="project-picloud" data-title="piCloud — Cloud Storage & File Management System" data-tags="node.js,express.js,mongodb,aws,aws s3,rest apis,cloud storage,rbac" data-desc="Distributed cloud storage and file management platform focused on scalable file uploads, role-based access control, storage optimization, and secure media handling.">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+            <h3>piCloud — Cloud Storage & File Management System</h3>
+            <button type="button" class="btn-action copy-project-btn" data-id="project-picloud" title="Copy link to piCloud project">Copy Link</button>
+          </div>
+          <p>
+            Distributed cloud storage and file management platform focused on scalable file uploads, role-based access
+            control, storage optimization, and secure media handling.
+          </p>
+          <p class="meta">Technologies: Node.js, Express.js, MongoDB, AWS S3, REST APIs</p>
+        </article>
 
-      <article class="item">
+        <article class="item project-item" id="project-queue" data-title="Private Queue & Operations Management Platform" data-tags="node.js,express.js,mongodb,mysql,websockets,rbac,real-time" data-desc="Real-time queue orchestration and operations management system engineered with deterministic queue behavior, dynamic wait-time calculations, concurrency safeguards, and RBAC infrastructure.">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+            <h3>Private Queue & Operations Management Platform</h3>
+            <button type="button" class="btn-action copy-project-btn" data-id="project-queue" title="Copy link to Private Queue project">Copy Link</button>
+          </div>
+          <p>
+            Real-time queue orchestration and operations management system engineered with deterministic queue behavior,
+            dynamic wait-time calculations, concurrency safeguards, and RBAC infrastructure.
+          </p>
+          <p class="meta">Technologies: Node.js, Express.js, MongoDB, MySQL, WebSockets, RBAC</p>
+        </article>
+      </div>
+
+      <div id="no-projects-msg" class="meta" style="display: none; padding: 12px 0;">
+        No projects match your current filter. Try resetting filters or searching for different keywords.
+      </div>
+
+      <article class="item" style="margin-top: 24px;">
         <h3>More Open Source & Backend Projects</h3>
         <p>
           Additional backend systems, automation tools, experimental architectures, and utilities are available on GitHub.
@@ -114,6 +164,18 @@
           <a href="https://github.com/shahruhban01" target="_blank" rel="noopener noreferrer">github.com/shahruhban01</a>
           <span id="github-repo-count"></span>
         </p>
+
+        <!-- Dynamic GitHub Repo Explorer -->
+        <div class="github-explorer" id="github-explorer">
+          <div class="github-explorer-header">
+            <span class="github-explorer-title">Live Public Repositories (GitHub API)</span>
+            <button type="button" id="github-refresh-btn" class="toolbar-btn" style="padding: 2px 7px; font-size: 0.78rem;" title="Refresh GitHub repositories">↻ Refresh</button>
+          </div>
+          <div id="github-repo-list" class="repo-grid">
+            <p class="meta" style="margin: 0; font-size: 0.82rem;">Loading repositories from GitHub...</p>
+          </div>
+          <div id="github-status-notice" class="meta" style="margin-top: 8px; margin-bottom: 0; font-size: 0.75rem;"></div>
+        </div>
       </article>
     </section>
 
@@ -175,7 +237,12 @@
       <h2>Contact</h2>
       <p>Feel free to reach out for work inquiries, collaboration, or engineering discussions:</p>
       <ul class="contact-list">
-        <li><strong>Email:</strong> <a href="mailto:shahruhban01@gmail.com">shahruhban01@gmail.com</a></li>
+        <li>
+          <strong>Email:</strong> 
+          <a href="mailto:shahruhban01@gmail.com" id="contact-email-link">shahruhban01@gmail.com</a>
+          <button type="button" id="copy-email-btn" class="btn-action" title="Copy email address to clipboard">Copy</button>
+          <a href="mailto:shahruhban01@gmail.com?subject=Portfolio%20Inquiry" class="btn-action" style="text-decoration: none;">Draft Mail</a>
+        </li>
         <li><strong>Phone:</strong> <a href="tel:+**********">+91 **********</a></li>
         <li><strong>WhatsApp:</strong> <a href="https://wa.me/@shahruhban" target="_blank" rel="noopener noreferrer">+91 **********</a></li>
         <li><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/shahruhban" target="_blank" rel="noopener noreferrer">linkedin.com/in/shahruhban</a></li>
@@ -208,9 +275,72 @@
 
     <footer>
       <hr>
-      <p class="meta">&copy; Ruhban Abdullah.</p>
+      <p class="meta">&copy; Ruhban Abdullah. Minimal interface, developer-first functionality.</p>
     </footer>
   </main>
+
+  <!-- Interactive Command Palette Modal -->
+  <div id="palette-overlay" class="palette-backdrop" hidden role="dialog" aria-modal="true" aria-label="Command Palette">
+    <div class="palette-dialog" id="palette-dialog">
+      <div class="palette-input-wrapper">
+        <span class="palette-icon">&gt;</span>
+        <input type="text" id="palette-input" class="palette-input" placeholder="Type a command or section... (e.g., projects, theme, email)" autocomplete="off" spellcheck="false">
+      </div>
+      <ul id="palette-results" class="palette-results" role="listbox"></ul>
+      <div class="palette-footer">
+        <span>Use <span class="kbd-hint">↑</span> <span class="kbd-hint">↓</span> to navigate</span>
+        <span><span class="kbd-hint">Enter</span> to run &bull; <span class="kbd-hint">Esc</span> to close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Developer Terminal Drawer -->
+  <div id="terminal-drawer" class="terminal-drawer" hidden role="region" aria-label="Developer Terminal">
+    <div class="terminal-topbar">
+      <div class="terminal-title">
+        <span>●</span>
+        <span>ruhban@dev-box: ~ (interactive shell)</span>
+      </div>
+      <div class="terminal-actions">
+        <button type="button" id="terminal-clear-btn" class="terminal-btn-icon" title="Clear console (Ctrl+L or clear)">clear</button>
+        <button type="button" id="terminal-close-btn" class="terminal-btn-icon" title="Close terminal (Esc or exit)">✕</button>
+      </div>
+    </div>
+    <div class="terminal-body" id="terminal-body">
+      <div id="terminal-output" class="terminal-output"></div>
+      <div class="terminal-input-row">
+        <span class="terminal-prompt">visitor@developerruhban:~$</span>
+        <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" spellcheck="false" aria-label="Terminal command input">
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div id="shortcuts-overlay" class="palette-backdrop" hidden role="dialog" aria-modal="true" aria-label="Keyboard Shortcuts">
+    <div class="palette-dialog" style="max-width: 480px; padding: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="margin: 0;">Keyboard Shortcuts</h3>
+        <button type="button" id="shortcuts-close-btn" class="btn-action" style="font-size: 0.9rem;" title="Close">✕</button>
+      </div>
+      <p class="meta" style="margin-bottom: 14px;">Navigate and control the portfolio entirely via keyboard:</p>
+      <div class="shortcuts-grid">
+        <div class="shortcut-row"><span>Command Palette</span> <span><span class="kbd-hint">Ctrl + K</span> or <span class="kbd-hint">/</span></span></div>
+        <div class="shortcut-row"><span>Toggle Terminal</span> <span><span class="kbd-hint">`</span></span></div>
+        <div class="shortcut-row"><span>Toggle Theme</span> <span><span class="kbd-hint">T</span></span></div>
+        <div class="shortcut-row"><span>Show Shortcuts</span> <span><span class="kbd-hint">?</span></span></div>
+        <div class="shortcut-row"><span>Jump to Projects</span> <span><span class="kbd-hint">G</span> then <span class="kbd-hint">P</span></span></div>
+        <div class="shortcut-row"><span>Jump to About</span> <span><span class="kbd-hint">G</span> then <span class="kbd-hint">A</span></span></div>
+        <div class="shortcut-row"><span>Jump to Skills</span> <span><span class="kbd-hint">G</span> then <span class="kbd-hint">S</span></span></div>
+        <div class="shortcut-row"><span>Jump to Experience</span> <span><span class="kbd-hint">G</span> then <span class="kbd-hint">E</span></span></div>
+        <div class="shortcut-row"><span>Jump to Contact</span> <span><span class="kbd-hint">G</span> then <span class="kbd-hint">C</span></span></div>
+        <div class="shortcut-row"><span>Close Any Modal</span> <span><span class="kbd-hint">Esc</span></span></div>
+      </div>
+      <p class="meta" style="margin: 0; font-size: 0.78rem;">Note: Global navigation shortcuts are disabled while typing inside input fields.</p>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
   <script src="script.js"></script>
 </body>
