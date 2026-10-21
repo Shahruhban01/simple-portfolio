@@ -13,9 +13,14 @@
     <header>
       <div class="header-top">
         <h1>Ruhban Abdullah</h1>
-        <button id="hire-me-game-btn" class="hire-me-pill" type="button" title="Play the 'Hire Me' Arcade Game!">
-          <span>Hire Me</span> <span style="font-size: 1rem;">🎮</span>
-        </button>
+        <div class="header-actions">
+          <button id="hire-me-game-btn" class="hire-me-pill" type="button" title="Play the 'Hire Me' Arcade Game!">
+            <span>Hire Me</span> <span style="font-size: 1rem;">🎮</span>
+          </button>
+          <button id="ats-apocalypse-btn" class="ats-apocalypse-pill" type="button" title="Launch ATS Apocalypse 🎯: Interactive Portfolio Destruction & Rebuild">
+            <span>ATS Apocalypse</span> <span style="font-size: 1rem;">🎯</span>
+          </button>
+        </div>
       </div>
       <p class="subtitle">Software Engineer | Backend Developer</p>
       <p class="intro">
@@ -30,7 +35,8 @@
         <a href="#experience">Experience</a> &bull;
         <a href="#education">Education</a> &bull;
         <a href="#contact">Contact</a> &bull;
-        <a href="#game" id="hire-me-link" style="color: #f43f5e; font-weight: 700;">Hire Me 🎮</a>
+        <a href="#game" id="hire-me-link" style="color: #f43f5e; font-weight: 700;">Hire Me 🎮</a> &bull;
+        <a href="#apocalypse" id="ats-apocalypse-link" style="color: #ef4444; font-weight: 700;">ATS Apocalypse 🎯</a>
         <!-- <a href="upload.html">Upload</a> &bull; -->
       </nav>
 
@@ -38,6 +44,7 @@
         <button id="palette-btn" class="toolbar-btn" type="button" title="Open Command Palette (Ctrl+K or /)"><span class="kbd-hint">⌘K</span> Commands</button>
         <button id="terminal-btn" class="toolbar-btn" type="button" title="Toggle Developer Terminal (`)"><span class="kbd-hint">`</span> Terminal</button>
         <button id="customize-btn" class="toolbar-btn" type="button" title="Open Interactive Playground / Customize Layout"><span class="kbd-hint">✦</span> Customize</button>
+        <button id="ats-apocalypse-toolbar-btn" class="toolbar-btn" type="button" title="Launch ATS Apocalypse 🎯: Portfolio Destruction & Rebuild"><span class="kbd-hint">🎯</span> ATS Apocalypse</button>
         <button id="theme-btn" class="toolbar-btn" type="button" title="Toggle Theme (T)"><span id="theme-icon">◐</span> <span id="theme-label">Theme</span></button>
         <button id="shortcuts-btn" class="toolbar-btn" type="button" title="Keyboard Shortcuts (?)"><span class="kbd-hint">?</span> Shortcuts</button>
       </div>
@@ -505,5 +512,6 @@
   <script src="js/resize.js"></script>
   <script src="js/editor.js"></script>
   <script src="js/hire-game.js"></script>
+  <script src="js/ats-apocalypse.js"></script>
 </body>
 </html>

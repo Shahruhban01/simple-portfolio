@@ -1515,6 +1515,46 @@ body.customization-active [data-custom-id].editor-selected > .editor-drag-handle
   }
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ats-apocalypse-pill {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+  color: #ffffff !important;
+  border: 1px solid rgba(254, 202, 202, 0.35);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 10px rgba(220, 38, 38, 0.45);
+  animation: pulseRedGlow 2.4s infinite;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+  font-family: inherit;
+}
+
+.ats-apocalypse-pill:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 18px rgba(220, 38, 38, 0.7);
+}
+
+@keyframes pulseRedGlow {
+  0%, 100% {
+    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.45), 0 0 12px rgba(220, 38, 38, 0.25);
+  }
+  50% {
+    box-shadow: 0 2px 16px rgba(220, 38, 38, 0.75), 0 0 24px rgba(220, 38, 38, 0.45);
+  }
+}
+
 /* Game Modal Backdrop */
 .game-backdrop {
   position: fixed;
@@ -2082,8 +2122,876 @@ body.customization-active [data-custom-id].editor-selected > .editor-drag-handle
     display: none; /* Hide side cards on small screens to give full focus to canvas */
   }
 
-  .touch-controls {
-    display: flex;
+}
+
+/* ==========================================================================
+   ATS Apocalypse 🎯 Real DOM Destruction Styles
+   ========================================================================== */
+
+/* Fullscreen Canvas Overlay */
+#ats-apocalypse-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99980;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* ATS Apocalypse Side HUD - Docked on Top Right so Name & Header are 100% visible */
+.ats-hud-container {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  left: auto;
+  transform: none;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(239, 68, 68, 0.55);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.65), 0 0 15px rgba(239, 68, 68, 0.25);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  color: #f8fafc;
+  animation: hudSlideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 390px;
+}
+
+@keyframes hudSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
+
+.ats-hud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #dc2626;
+  color: #ffffff;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+  animation: pulseRed 1.8s infinite;
+}
+
+@keyframes pulseRed {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(220, 38, 38, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.9);
+  }
+}
+
+.ats-hud-stage {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #facc15;
+}
+
+.ats-hud-bar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.ats-meter-track {
+  width: 110px;
+  height: 8px;
+  background: #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #334155;
+  position: relative;
+}
+
+.ats-meter-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+  transition: width 0.25s ease, background 0.3s ease;
+}
+
+.ats-hud-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-family: ui-monospace, monospace;
+}
+
+.ats-hud-stats strong {
+  color: #f8fafc;
+}
+
+.ats-hud-btn {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #cbd5e1;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ats-hud-btn:hover {
+  background: #334155;
+  color: #ffffff;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.ats-hud-rebuild-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #34d399;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.ats-hud-rebuild-btn:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.7);
+}
+
+.ats-hud-exit-btn {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: #ef4444;
+  color: #fca5a5;
+  font-weight: 700;
+}
+
+.ats-hud-exit-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.ats-hud-hint {
+  font-size: 0.74rem;
+  color: #facc15;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px dashed rgba(250, 204, 21, 0.4);
+}
+
+/* Crosshair cursor when Apocalypse mode active */
+body.ats-apocalypse-active {
+  cursor: crosshair !important;
+}
+
+body.ats-apocalypse-active * {
+  cursor: inherit;
+}
+
+/* Real Section Target Hover Frames during ATS Apocalypse */
+body.ats-apocalypse-active header h1,
+body.ats-apocalypse-active .dreams-cinematic-container,
+body.ats-apocalypse-active #project-items-list .project-item,
+body.ats-apocalypse-active #skills,
+body.ats-apocalypse-active #experience,
+body.ats-apocalypse-active #contact,
+body.ats-apocalypse-active header .links a {
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: crosshair !important;
+}
+
+body.ats-apocalypse-active header h1:hover,
+body.ats-apocalypse-active .dreams-cinematic-container:hover,
+body.ats-apocalypse-active #project-items-list .project-item:hover,
+body.ats-apocalypse-active #skills:hover,
+body.ats-apocalypse-active #experience:hover,
+body.ats-apocalypse-active #contact:hover,
+body.ats-apocalypse-active header .links a:hover {
+  outline: 2px dashed #ef4444 !important;
+  outline-offset: 4px;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.35) !important;
+}
+
+body.ats-apocalypse-active header h1:hover::after {
+  content: "🎯 TARGET: RUHBAN ABDULLAH (CLICK TO SHATTER)";
+  position: absolute;
+  top: -24px;
+  left: 0;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(220, 38, 38, 0.7);
+  animation: pulseRed 1.5s infinite;
+}
+
+body.ats-apocalypse-active #project-items-list .project-item:hover::after {
+  content: "🎯 TARGET: PROJECT (CLICK TO BLAST)";
+  position: absolute;
+  top: -12px;
+  right: 12px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Stage 4 Desaturation / Visual Instability */
+body.ats-page-cracking {
+  filter: grayscale(80%) contrast(115%) brightness(0.9);
+  transition: filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.ats-page-restored {
+  filter: none !important;
+  transition: filter 0.8s ease;
+}
+
+/* Physically Shattered Name Letters */
+.ats-shatter-letter {
+  display: inline-block;
+  position: relative;
+  transition: transform 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease, filter 0.5s ease, color 0.4s ease;
+  will-change: transform, opacity;
+}
+
+.ats-shatter-letter.broken-shard {
+  transform: translate(var(--tx, 0px), var(--ty, 0px)) rotate(var(--rot, 0deg)) scale(var(--sc, 1));
+  color: #ef4444 !important;
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+  opacity: 0.88;
+}
+
+.ats-shatter-letter.broken-shard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #fca5a5;
+  transform: rotate(-18deg);
+  opacity: 0.7;
+}
+
+.ats-shatter-letter.rebuilt {
+  transform: translate(0px, 0px) rotate(0deg) scale(1) !important;
+  opacity: 1 !important;
+  color: inherit !important;
+  text-shadow: 0 0 20px rgba(56, 189, 248, 0.9);
+  animation: rebuildSparkle 0.8s ease forwards;
+}
+
+/* Jagged Crack Line Overlay on H1 */
+.ats-h1-crack-overlay {
+  position: absolute;
+  inset: -8px;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 30%, rgba(239, 68, 68, 0.2) 100%);
+  border: 2px dashed rgba(239, 68, 68, 0.8);
+  border-radius: 8px;
+  animation: crackFlash 0.35s ease-out;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+@keyframes crackFlash {
+  0% {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.04);
+  }
+  100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+/* Project Card Tilted Broken State */
+.project-item.ats-card-broken {
+  transform: translateY(12px) rotate(var(--card-rot, -4deg)) !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3) !important;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes rebuildSparkle {
+  0% {
+    filter: drop-shadow(0 0 10px #38bdf8);
+  }
+  50% {
+    filter: drop-shadow(0 0 24px #4ade80);
+  }
+  100% {
+    filter: none;
+  }
+}
+
+.ats-name-glitch-badge {
+  display: inline-block;
+  margin-left: 8px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  vertical-align: middle;
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.9);
+  animation: glitchBlink 0.8s infinite;
+}
+
+@keyframes glitchBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.96) skew(-2deg); }
+}
+
+/* Dreams Cinematic Banner */
+.dreams-cinematic-container {
+  margin: 18px 0;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-left: 4px solid #38bdf8;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: dreamsFadeIn 0.4s ease-out;
+}
+
+@keyframes dreamsFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dreams-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dreams-lines-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f8fafc;
+  font-family: ui-monospace, monospace;
+}
+
+.dreams-line-item {
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.dreams-line-item.rejected {
+  color: #ef4444;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.dreams-rejection-tag {
+  display: inline-block;
+  margin-left: 8px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+/* Stamped Rejections on Real Sections */
+.ats-stamp-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  border: 4px solid #dc2626;
+  color: #dc2626;
+  background: rgba(254, 226, 226, 0.94);
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 8px 18px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+  pointer-events: none;
+  z-index: 50;
+  animation: stampImpact 0.22s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes stampImpact {
+  0% {
+    transform: translate(-50%, -50%) scale(2.4) rotate(-30deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(-12deg);
+    opacity: 1;
+  }
+}
+
+/* Skill Gatekeeper requirement overlay */
+.ats-skill-lockout {
+  position: absolute;
+  inset: 0;
+  background: rgba(220, 38, 38, 0.88);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  z-index: 20;
+  animation: fadeIn 0.2s ease;
+  padding: 2px 4px;
+  text-align: center;
+}
+
+/* Resume Scanner Sweep Bar */
+.ats-scanner-bar {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #ef4444;
+  box-shadow: 0 0 12px #ef4444, 0 0 24px #dc2626;
+  pointer-events: none;
+  z-index: 60;
+  animation: scannerSweep 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes scannerSweep {
+  0% { top: 0%; opacity: 0.6; }
+  100% { top: 100%; opacity: 1; }
+}
+
+/* Contact Section ATS Firewall */
+.ats-contact-firewall {
+  position: absolute;
+  inset: -10px;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(8px);
+  border: 2px solid #ef4444;
+  border-radius: 12px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 0 35px rgba(239, 68, 68, 0.5), inset 0 0 20px rgba(239, 68, 68, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+.ats-contact-firewall.shattered {
+  animation: firewallShatter 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes firewallShatter {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px #ef4444);
+  }
+  50% {
+    transform: scale(1.05) rotate(1deg);
+    filter: brightness(1.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translateY(30px);
+    pointer-events: none;
+  }
+}
+
+.firewall-lock-icon {
+  font-size: 2.4rem;
+  margin-bottom: 8px;
+  animation: pulseRed 1.5s infinite;
+}
+
+.firewall-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ef4444;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.firewall-desc {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  max-width: 440px;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.firewall-boss-hp {
+  width: 100%;
+  max-width: 320px;
+  height: 10px;
+  background: #1e293b;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #475569;
+}
+
+.firewall-boss-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  transition: width 0.2s ease;
+}
+
+/* Chaotic Floating Stat Badges (Stage 4 Breaking Point) */
+.chaotic-stat-badge {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.95);
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-family: ui-monospace, monospace;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35);
+  z-index: 80;
+  pointer-events: none;
+  animation: chaoticFloat 3s ease-in-out infinite alternate;
+}
+
+@keyframes chaoticFloat {
+  0% { transform: translateY(0px) rotate(-1deg); }
+  100% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+/* Shake Animation */
+.ats-shake {
+  animation: atsShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes atsShake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(3px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* Final Victory Modal */
+.ats-victory-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 11, 20, 0.96);
+  backdrop-filter: blur(10px);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.ats-victory-card {
+  max-width: 580px;
+  width: 100%;
+  background: linear-gradient(145deg, #0f172a, #020617);
+  border: 2px solid #38bdf8;
+  border-radius: 14px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(56, 189, 248, 0.35), 0 20px 40px rgba(0, 0, 0, 0.8);
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  color: #f8fafc;
+}
+
+.victory-trophy {
+  font-size: 3.2rem;
+  margin-bottom: 8px;
+  animation: trophyFloat 2s ease-in-out infinite alternate;
+}
+
+@keyframes trophyFloat {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-8px) scale(1.08); }
+}
+
+.victory-quote-primary {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #38bdf8;
+  letter-spacing: 0.3px;
+  margin-bottom: 8px;
+  line-height: 1.35;
+  text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+}
+
+.victory-quote-secondary {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #4ade80;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.victory-meta-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+}
+
+.victory-meta-card strong {
+  color: #facc15;
+  font-size: 1.05rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.victory-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.victory-hire-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(34, 197, 94, 0.5);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  font-family: inherit;
+}
+
+.victory-hire-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 24px rgba(34, 197, 94, 0.7);
+}
+
+.victory-dismiss-btn {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.victory-dismiss-btn:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+/* Career Progression Line */
+.career-prog-line {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px dashed rgba(56, 189, 248, 0.35);
+  border-radius: 6px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #94a3b8;
+  transition: all 0.5s ease;
+}
+
+.career-node {
+  background: #1e293b;
+  border: 1px solid #334155;
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: #e2e8f0;
+  font-weight: 600;
+  transition: all 0.4s ease;
+}
+
+.career-node.shattered {
+  border-color: #ef4444;
+  color: #ef4444;
+  text-decoration: line-through;
+  transform: rotate(-3deg);
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.career-node.restored {
+  border-color: #4ade80;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.15);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+.career-arrow {
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+.career-arrow.broken {
+  color: #ef4444;
+}
+
+/* Center Screen Dramatic Notice */
+.ats-center-notice {
+  position: fixed;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.96), rgba(185, 28, 28, 0.98));
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 2px solid #fecaca;
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 30px rgba(220, 38, 38, 0.6);
+  z-index: 100000;
+  pointer-events: none;
+  animation: noticePop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  text-align: center;
+  max-width: 90vw;
+}
+
+@keyframes noticePop {
+  0% { transform: translate(-50%, -15px) scale(0.9); opacity: 0; }
+  100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+}
+
+/* Badges for resume and skills */
+.ats-resume-stamp {
+  display: inline-block;
+  margin-left: 6px;
+  background: #dc2626;
+  color: #ffffff !important;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  animation: pulseRed 1.5s infinite;
+}
+
+.ats-skill-gate {
+  display: inline-block;
+  margin-left: 6px;
+  background: rgba(220, 38, 38, 0.88);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+.ats-stamp.stamp-project {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  border: 3px solid #dc2626;
+  color: #dc2626;
+  background: rgba(254, 226, 226, 0.95);
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transform: rotate(-8deg);
+  pointer-events: none;
+  z-index: 20;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+  animation: stampImpact 0.2s ease-out;
+}
+
+.ats-stamp.stamp-experience {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  border: 4px solid #dc2626;
+  color: #dc2626;
+  background: rgba(254, 226, 226, 0.96);
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 6px 16px;
+  border-radius: 6px;
+  transform: rotate(-10deg);
+  pointer-events: none;
+  z-index: 30;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4);
+  animation: stampImpact 0.22s ease-out;
+}
+
 

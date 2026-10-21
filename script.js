@@ -468,6 +468,15 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
     {
+      id: "apocalypse",
+      title: "ATS Apocalypse 🎯",
+      desc: "Portfolio Destruction & Rebuild game: Battle the ATS filter!",
+      category: "Arcade",
+      action: () => {
+        if (window.ATSApocalypse) window.ATSApocalypse.start();
+      },
+    },
+    {
       id: "customize",
       title: "Interactive Customization Playground",
       desc: "Drag, resize, reorder sections, and customize live styling",
@@ -749,6 +758,7 @@ Available commands:
   <span class="cmd-success">resume</span>         Open official resume PDF in a new tab
   <span class="cmd-success">customize</span>      Launch interactive drag &amp; drop layout playground
   <span class="cmd-success">game</span>           Play the "Hire Me" retro arcade mini-game 🎮
+  <span class="cmd-success">apocalypse</span>     Launch "ATS Apocalypse 🎯" portfolio destruction game
   <span class="cmd-success">theme</span>          Change theme (<span class="cmd-meta">theme light</span>, <span class="cmd-meta">theme dark</span>, <span class="cmd-meta">theme toggle</span>)
   <span class="cmd-success">whoami</span>         Print current session identity
   <span class="cmd-success">date</span>           Print current date and time
@@ -883,6 +893,18 @@ Tip: Use <span class="cmd-meta">resume</span> to view PDF resume.
       closeTerminal();
       if (window.HireMeGame) window.HireMeGame.open();
       return `<span class="cmd-success">Launching "Hire Me" Arcade Game...</span>`;
+    },
+
+    apocalypse: () => {
+      closeTerminal();
+      if (window.ATSApocalypse) window.ATSApocalypse.start();
+      return `<span class="cmd-success">Launching ATS Apocalypse 🎯...</span>`;
+    },
+
+    ats: () => {
+      closeTerminal();
+      if (window.ATSApocalypse) window.ATSApocalypse.start();
+      return `<span class="cmd-success">Launching ATS Apocalypse 🎯...</span>`;
     },
 
     theme: (args) => {
