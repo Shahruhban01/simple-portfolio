@@ -459,6 +459,17 @@ document.addEventListener("DOMContentLoaded", () => {
       action: () => navigateToSection("contact"),
     },
     {
+      id: "customize",
+      title: "Interactive Customization Playground",
+      desc: "Drag, resize, reorder sections, and customize live styling",
+      category: "Playground",
+      action: () => {
+        if (window.PortfolioEditor && window.PortfolioEditor.Controller) {
+          window.PortfolioEditor.Controller.enterCustomization();
+        }
+      },
+    },
+    {
       id: "terminal",
       title: "Open Developer Terminal",
       desc: "Interactive CLI interface with custom commands (` key)",
@@ -727,6 +738,7 @@ Available commands:
   <span class="cmd-success">contact</span>        Show contact channels and email
   <span class="cmd-success">github</span>         Display GitHub profile and live repository metrics
   <span class="cmd-success">resume</span>         Open official resume PDF in a new tab
+  <span class="cmd-success">customize</span>      Launch interactive drag &amp; drop layout playground
   <span class="cmd-success">theme</span>          Change theme (<span class="cmd-meta">theme light</span>, <span class="cmd-meta">theme dark</span>, <span class="cmd-meta">theme toggle</span>)
   <span class="cmd-success">whoami</span>         Print current session identity
   <span class="cmd-success">date</span>           Print current date and time
@@ -841,6 +853,14 @@ Tip: Use <span class="cmd-meta">resume</span> to view PDF resume.
     resume: () => {
       window.open(RESUME_URL, "_blank", "noopener,noreferrer");
       return `<span class="cmd-success">Opening resume PDF in new tab...</span>`;
+    },
+
+    customize: () => {
+      closeTerminal();
+      if (window.PortfolioEditor && window.PortfolioEditor.Controller) {
+        window.PortfolioEditor.Controller.enterCustomization();
+      }
+      return `<span class="cmd-success">Interactive playground activated.</span>`;
     },
 
     theme: (args) => {

@@ -33,6 +33,7 @@
       <div class="nav-toolbar" aria-label="Developer Tools">
         <button id="palette-btn" class="toolbar-btn" type="button" title="Open Command Palette (Ctrl+K or /)"><span class="kbd-hint">⌘K</span> Commands</button>
         <button id="terminal-btn" class="toolbar-btn" type="button" title="Toggle Developer Terminal (`)"><span class="kbd-hint">`</span> Terminal</button>
+        <button id="customize-btn" class="toolbar-btn" type="button" title="Open Interactive Playground / Customize Layout"><span class="kbd-hint">✦</span> Customize</button>
         <button id="theme-btn" class="toolbar-btn" type="button" title="Toggle Theme (T)"><span id="theme-icon">◐</span> <span id="theme-label">Theme</span></button>
         <button id="shortcuts-btn" class="toolbar-btn" type="button" title="Keyboard Shortcuts (?)"><span class="kbd-hint">?</span> Shortcuts</button>
       </div>
@@ -327,6 +328,7 @@
         <div class="shortcut-row"><span>Command Palette</span> <span><span class="kbd-hint">Ctrl + K</span> or <span class="kbd-hint">/</span></span></div>
         <div class="shortcut-row"><span>Toggle Terminal</span> <span><span class="kbd-hint">`</span></span></div>
         <div class="shortcut-row"><span>Toggle Theme</span> <span><span class="kbd-hint">T</span></span></div>
+        <div class="shortcut-row"><span>Customization Playground</span> <span><span class="kbd-hint">✦</span> Customize</span></div>
         <div class="shortcut-row"><span>Show Shortcuts</span> <span><span class="kbd-hint">?</span></span></div>
         <div class="shortcut-row"><span>Jump to Projects</span> <span><span class="kbd-hint">G</span> then <span class="kbd-hint">P</span></span></div>
         <div class="shortcut-row"><span>Jump to About</span> <span><span class="kbd-hint">G</span> then <span class="kbd-hint">A</span></span></div>
@@ -343,5 +345,11 @@
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
   <script src="script.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/drag-drop.js"></script>
+  <script src="js/resize.js"></script>
+  <script src="js/editor.js"></script>
 </body>
 </html>
