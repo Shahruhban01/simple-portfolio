@@ -3,7 +3,14 @@
  * Pure Vanilla JavaScript (Zero external dependencies)
  */
 
-const API_BASE_URL = "https://api.developerruhban.online";
+const API_BASE_URL = (
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.protocol === "file:" ||
+  window.location.port !== ""
+)
+  ? "http://localhost:4000"
+  : "https://api.developerruhban.online";
 const GITHUB_USERNAME = "shahruhban01";
 const GITHUB_CACHE_KEY = "portfolio_github_repos";
 const GITHUB_CACHE_TIME_KEY = "portfolio_github_timestamp";
@@ -1271,4 +1278,322 @@ Type <span class="cmd-success">'help'</span> for a list of valid commands.
     element.textContent = "";
     element.style.display = "none";
   }
+
+  // =========================================================================
+  // 10. Unique Visitor Tracking & Public Counter
+  // =========================================================================
+  /**
+   * Browser-Based Pseudonymous Visitor Tracking:
+   * 
+   * PRIVACY & ACCURACY DOCUMENTATION:
+   * - In accordance with privacy best practices, this portfolio strictly avoids invasive fingerprinting.
+   * - A random pseudonymous identifier is created on first visit and stored in localStorage and a first-party cookie.
+   * - As documented, browser-based identifiers cannot reliably identify the same human across different devices,
+   *   distinct browsers, private browsing windows, or when storage/cookies are cleared.
+   * - Sessions expire after 30 minutes of inactivity.
+   * - Tracking calls are debounced and deduplicated to prevent artificial inflation.
+   */
+  const VISITOR_ID_KEY = "portfolio_visitor_id";
+  const SESSION_ID_KEY = "portfolio_session_id";
+  const SESSION_TS_KEY = "portfolio_session_ts";
+  const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
+    return match ? decodeURIComponent(match[3]) : null;
+  }
+
+  function setCookie(name, val, maxAgeDays = 365) {
+    try {
+      const maxAge = maxAgeDays * 24 * 60 * 60;
+      document.cookie = `${name}=${encodeURIComponent(val)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+    } catch (_e) {}
+  }
+
+  function getOrCreateVisitorId() {
+    let vid = null;
+    try {
+      vid = localStorage.getItem(VISITOR_ID_KEY);
+    } catch (_e) {}
+
+    if (!vid) {
+      vid = getCookie("pv_id");
+    }
+
+    if (!vid) {
+      vid = typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : "v_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+      try {
+        localStorage.setItem(VISITOR_ID_KEY, vid);
+      } catch (_e) {}
+      setCookie("pv_id", vid);
+    }
+
+    return vid;
+  }
+
+  function getOrCreateSession() {
+    const now = Date.now();
+    let sid = null;
+    let isNewSession = false;
+
+    try {
+      sid = sessionStorage.getItem(SESSION_ID_KEY);
+      const lastTs = Number(sessionStorage.getItem(SESSION_TS_KEY) || 0);
+
+      if (!sid || !lastTs || now - lastTs > SESSION_TIMEOUT_MS) {
+        sid = typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : "s_" + now.toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+        sessionStorage.setItem(SESSION_ID_KEY, sid);
+        isNewSession = true;
+      }
+      sessionStorage.setItem(SESSION_TS_KEY, String(now));
+    } catch (_e) {
+      sid = "s_fallback_" + now;
+      isNewSession = true;
+    }
+
+    return { sid, isNewSession };
+  }
+
+  function detectClientDevice() {
+    const ua = navigator.userAgent || "";
+    let category = "desktop";
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+      category = "tablet";
+    } else if (/mobile|iphone|ipod|blackberry|opera mini|iemobile|wpdesktop|windows phone/i.test(ua)) {
+      category = "mobile";
+    }
+
+    let browser = "Other";
+    if (ua.includes("Edg/")) browser = "Edge";
+    else if (ua.includes("OPR/") || ua.includes("Opera")) browser = "Opera";
+    else if (ua.includes("Chrome") && !ua.includes("Chromium")) browser = "Chrome";
+    else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
+    else if (ua.includes("Firefox")) browser = "Firefox";
+
+    let os = "Other";
+    if (ua.includes("Win")) os = "Windows";
+    else if (ua.includes("Android")) os = "Android";
+    else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+    else if (ua.includes("Mac")) os = "macOS";
+    else if (ua.includes("Linux")) os = "Linux";
+
+    return { category, browser, os };
+  }
+
+  // Public visitor counter element
+  const visitorCountNum = document.getElementById("visitor-count-number");
+
+  async function updateVisitorCounterUI() {
+    if (!visitorCountNum) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/tracking/visitor-count`);
+      if (!res.ok) throw new Error("Count endpoint returned " + res.status);
+      const data = await res.json();
+      if (typeof data.count === "number") {
+        visitorCountNum.textContent = data.count.toLocaleString();
+      } else {
+        visitorCountNum.textContent = "--";
+      }
+    } catch (_err) {
+      // Never show fabricated numbers if API is unreachable
+      visitorCountNum.textContent = "Unavailable";
+    }
+  }
+
+  let lastTrackedSection = "";
+  let lastTrackedTime = 0;
+
+  async function trackVisit(sectionName = "home") {
+    const now = Date.now();
+    // Deduplicate rapid repeat pings for same section within 10 seconds
+    if (sectionName === lastTrackedSection && now - lastTrackedTime < 10000) {
+      return;
+    }
+    lastTrackedSection = sectionName;
+    lastTrackedTime = now;
+
+    const visitorId = getOrCreateVisitorId();
+    const { sid, isNewSession } = getOrCreateSession();
+    const device = detectClientDevice();
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/tracking/visit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          visitorId,
+          sessionId: sid,
+          page: window.location.pathname || "/",
+          section: sectionName,
+          referrer: document.referrer || "",
+          device,
+          isNewSession,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.totalUniqueVisitors && visitorCountNum) {
+          visitorCountNum.textContent = data.totalUniqueVisitors.toLocaleString();
+        }
+      }
+    } catch (_err) {
+      // Silently proceed if analytics endpoint is temporarily offline
+    }
+  }
+
+  // Initial visit tracking on load
+  trackVisit("home");
+  updateVisitorCounterUI();
+
+  // Track section transitions when user scrolls or clicks nav
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.target.id) {
+          trackVisit(entry.target.id);
+        }
+      });
+    },
+    { threshold: 0.4 }
+  );
+
+  document.querySelectorAll("section[id]").forEach((sec) => {
+    sectionObserver.observe(sec);
+  });
+
+  // =========================================================================
+  // 11. Transparent Location Permission Prompt
+  // =========================================================================
+  const locationPrompt = document.getElementById("location-prompt");
+  const locationAllowBtn = document.getElementById("location-allow-btn");
+  const locationDeclineBtn = document.getElementById("location-decline-btn");
+  const locationCloseBtn = document.getElementById("location-prompt-close-btn");
+  const LOCATION_PREF_KEY = "portfolio_location_pref_choice";
+
+  function shouldShowLocationPrompt() {
+    try {
+      return !localStorage.getItem(LOCATION_PREF_KEY);
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  function setLocationPref(choice) {
+    try {
+      localStorage.setItem(LOCATION_PREF_KEY, choice);
+    } catch (_e) {}
+  }
+
+  function hideLocationPrompt() {
+    if (locationPrompt) {
+      locationPrompt.hidden = true;
+      locationPrompt.style.display = "none";
+    }
+  }
+
+  // Display location prompt smoothly after visitor engages
+  if (shouldShowLocationPrompt() && locationPrompt) {
+    setTimeout(() => {
+      if (shouldShowLocationPrompt()) {
+        locationPrompt.hidden = false;
+        locationPrompt.style.display = "block";
+      }
+    }, 1800);
+  }
+
+  // Action: Allow location access
+  if (locationAllowBtn) {
+    locationAllowBtn.addEventListener("click", () => {
+      hideLocationPrompt();
+      setLocationPref("prompt_allowed");
+
+      // The browser native permission dialog is triggered ONLY after visitor clicked allow
+      if (!navigator.geolocation) {
+        showToast("Geolocation is not supported by your browser.", "info");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude, accuracy } = position.coords;
+          const visitorId = getOrCreateVisitorId();
+
+          try {
+            const res = await fetch(`${API_BASE_URL}/api/tracking/location`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                visitorId,
+                latitude,
+                longitude,
+                accuracy,
+                timestamp: position.timestamp || Date.now(),
+              }),
+            });
+
+            if (res.ok) {
+              setLocationPref("granted");
+              showToast("Location updated for portfolio analytics. Thank you! 📍", "success");
+            }
+          } catch (_e) {
+            // Graceful fallback
+          }
+        },
+        async (err) => {
+          setLocationPref("denied_in_browser");
+          const visitorId = getOrCreateVisitorId();
+          try {
+            await fetch(`${API_BASE_URL}/api/tracking/consent`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                visitorId,
+                promptDismissed: true,
+                consented: false,
+              }),
+            });
+          } catch (_e) {}
+
+          if (err.code === err.PERMISSION_DENIED) {
+            showToast("Location access declined. Using approximate IP location instead.", "info");
+          }
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+      );
+    });
+  }
+
+  // Action: Continue without sharing
+  if (locationDeclineBtn) {
+    locationDeclineBtn.addEventListener("click", async () => {
+      hideLocationPrompt();
+      setLocationPref("declined");
+      const visitorId = getOrCreateVisitorId();
+      try {
+        await fetch(`${API_BASE_URL}/api/tracking/consent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            visitorId,
+            promptDismissed: true,
+            consented: false,
+          }),
+        });
+      } catch (_e) {}
+    });
+  }
+
+  // Action: Close 'X' button
+  if (locationCloseBtn) {
+    locationCloseBtn.addEventListener("click", () => {
+      hideLocationPrompt();
+      setLocationPref("dismissed");
+    });
+  }
 });
+
