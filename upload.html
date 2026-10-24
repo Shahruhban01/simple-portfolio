@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin & Analytics Dashboard - Ruhban Abdullah</title>
   <meta name="description" content="Portfolio Analytics, Visitor Tracking, Contact Inquiries, and Content Management.">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), interest-cohort=(), geolocation=(self)">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.developerruhban.online https://avatars.githubusercontent.com; connect-src 'self' https://api.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; font-src 'self' data:; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <script>
+    // Anti-clickjacking / Frame-busting protection
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+  </script>
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -67,7 +81,8 @@
 
             <div class="form-group">
               <label for="upload-file">Attach File (optional, max 10 MB):</label>
-              <input type="file" id="upload-file">
+              <input type="file" id="upload-file" accept=".png,.jpg,.jpeg,.gif,.webp,.pdf,.txt,.csv,.json,.doc,.docx,.zip">
+              <p class="meta" style="margin-top: 2px; font-size: 0.78rem;">Allowed formats: Images (PNG, JPG, WEBP, GIF), Documents (PDF, DOCX, TXT, CSV, JSON), Archives (ZIP). Executables and active web content are strictly blocked.</p>
               <p id="file-info" class="meta" style="margin-top: 4px; display: none;"></p>
             </div>
 

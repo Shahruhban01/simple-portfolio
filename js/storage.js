@@ -150,8 +150,9 @@ window.PortfolioEditor = window.PortfolioEditor || {};
       sanitized.elements = {};
       Object.keys(input.elements).forEach((elemId) => {
         if (typeof elemId !== "string" || elemId.length > 60) return;
+        if (elemId === "__proto__" || elemId === "constructor" || elemId === "prototype") return;
         const elemData = input.elements[elemId];
-        if (!elemData || typeof elemData !== "object") return;
+        if (!elemData || typeof elemData !== "object" || Array.isArray(elemData)) return;
 
         const cleanElem = { style: {} };
         if (elemData.style && typeof elemData.style === "object") {

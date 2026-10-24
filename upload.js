@@ -34,13 +34,42 @@ function formatDate(dateStr) {
 
 // Helper: Escape HTML
 function escapeHtml(str) {
-  if (!str) return "";
+  if (str === null || str === undefined) return "";
   return String(str)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+// Disallowed file extensions to prevent active content execution and malicious binaries
+const BLOCKED_FILE_EXTENSIONS = [
+  ".html", ".htm", ".xhtml", ".svg", ".xml", ".js", ".mjs", ".ts",
+  ".exe", ".bat", ".cmd", ".sh", ".bash", ".ps1", ".vbs", ".msi",
+  ".dll", ".scr", ".jar", ".com", ".pif", ".application", ".gadget",
+  ".php", ".phtml", ".py", ".rb", ".pl", ".cgi", ".asp", ".aspx"
+];
+
+function isSafeFile(file) {
+  if (!file || !file.name) return true;
+  const lowerName = file.name.toLowerCase();
+  for (const ext of BLOCKED_FILE_EXTENSIONS) {
+    if (lowerName.endsWith(ext) || lowerName.includes(ext + ".")) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isSafeHttpUrl(url) {
+  if (!url || typeof url !== "string") return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:";
+  } catch (_e) {
+    return false;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -94,14 +123,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // File size check on selection
+  // File size and extension check on selection
   if (uploadFile && fileInfo) {
     uploadFile.addEventListener("change", () => {
       const file = uploadFile.files?.[0];
       if (file) {
         fileInfo.style.display = "block";
         fileInfo.textContent = `Selected: ${file.name} (${formatSize(file.size)})`;
-        if (file.size > MAX_FILE_SIZE) {
+
+        if (!isSafeFile(file)) {
+          showStatus(uploadStatus, "Executable files and active web content (.html, .svg, .js, .exe, etc.) are strictly disallowed.", "error");
+        } else if (file.size > MAX_FILE_SIZE) {
           showStatus(uploadStatus, "File exceeds the 10 MB limit.", "error");
         } else {
           hideStatus(uploadStatus);
@@ -121,6 +153,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!text && !file) {
         showStatus(uploadStatus, "Please provide a text note, attach a file, or both.", "error");
+        return;
+      }
+
+      if (file && !isSafeFile(file)) {
+        showStatus(uploadStatus, "Blocked file type: Active web content and executables are not permitted.", "error");
         return;
       }
 
@@ -167,25 +204,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Admin Token Management ---
+  // --- Admin Token Management (Restricted to sessionStorage for session security) ---
   function getAdminToken() {
-    return (
-      sessionStorage.getItem("adminToken") ||
-      localStorage.getItem("adminToken") ||
-      localStorage.getItem("admin_token") ||
-      ""
-    );
+    return sessionStorage.getItem("adminToken") || "";
   }
 
   function setAdminToken(token) {
     if (token) {
-      sessionStorage.setItem("adminToken", token);
-      localStorage.setItem("adminToken", token);
+      sessionStorage.setItem("adminToken", String(token).trim().slice(0, 256));
     } else {
       sessionStorage.removeItem("adminToken");
+    }
+    // Clean up any legacy localStorage entries for defense-in-depth
+    try {
       localStorage.removeItem("adminToken");
       localStorage.removeItem("admin_token");
-    }
+    } catch (_e) {}
   }
 
   // --- Tab Management ---
@@ -786,13 +820,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let fileHtml = "";
       if (item.file) {
+        const hasSafeUrl = isSafeHttpUrl(item.file.url);
         fileHtml = `
           <div class="record-file">
             <div>
               <strong>${escapeHtml(item.file.name || "Attached file")}</strong>
               <span class="meta">(${formatSize(item.file.size)} &bull; ${escapeHtml(item.file.contentType || "binary")})</span>
             </div>
-            ${item.file.url ? `<a href="${item.file.url}" target="_blank" rel="noopener noreferrer">Download / View</a>` : ""}
+            ${hasSafeUrl ? `<a href="${escapeHtml(item.file.url)}" target="_blank" rel="noopener noreferrer">Download / View</a>` : ""}
           </div>
         `;
       }

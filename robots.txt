@@ -1,0 +1,20 @@
+# robots.txt for https://developerruhban.online
+# Technical SEO: Ruhban Abdullah - Software Engineer & Backend Developer Portfolio
+
+User-agent: *
+Allow: /
+Allow: /style.css
+Allow: /script.js
+Allow: /js/
+Allow: /manifest.json
+Allow: /og-image.png
+Allow: /favicon*
+Allow: /apple-touch-icon.png
+
+# Protect private admin, upload dashboard, and backend endpoints from indexing
+Disallow: /upload.html
+Disallow: /upload.js
+Disallow: /api/
+
+# Canonical Sitemap
+Sitemap: https://developerruhban.online/sitemap.xml

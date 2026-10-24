@@ -52,13 +52,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Helper: Escape HTML
   function escapeHtml(str) {
-    if (!str) return "";
+    if (str === null || str === undefined) return "";
     return String(str)
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
+  }
+
+  function isSafeGithubUrl(url) {
+    if (!url || typeof url !== "string") return false;
+    return /^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+/.test(url);
   }
 
   // =========================================================================
@@ -373,10 +378,11 @@ document.addEventListener("DOMContentLoaded", () => {
         year: "numeric",
       });
 
+      const safeUrl = isSafeGithubUrl(repo.html_url) ? repo.html_url : `https://github.com/${encodeURIComponent(GITHUB_USERNAME)}`;
       html += `
         <article class="repo-card">
           <div class="repo-name-row">
-            <a href="${escapeHtml(repo.html_url)}" class="repo-name" target="_blank" rel="noopener noreferrer">
+            <a href="${escapeHtml(safeUrl)}" class="repo-name" target="_blank" rel="noopener noreferrer">
               ${escapeHtml(repo.name)}
             </a>
             <span class="repo-meta">★ ${stars}</span>
@@ -868,7 +874,7 @@ Tip: Run <span class="cmd-meta">projects &lt;keyword&gt;</span> (e.g. <span clas
       if (cached) {
         try {
           const list = JSON.parse(cached);
-          repoSnippet = `<br>Latest active repos: ` + list.slice(0, 3).map((r) => r.name).join(", ");
+          repoSnippet = `<br>Latest active repos: ` + list.slice(0, 3).map((r) => escapeHtml(r.name)).join(", ");
         } catch (_e) {}
       }
       return `

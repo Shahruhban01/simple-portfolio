@@ -87,6 +87,28 @@ body {
   flex-direction: column;
 }
 
+/* Accessibility Skip Link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  background: var(--accent);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  z-index: 99999;
+  text-decoration: none;
+  transition: top 0.15s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.skip-link:focus {
+  top: 16px;
+  outline: 3px solid var(--border-focus);
+}
+
 .container {
   max-width: 680px;
   width: 100%;
