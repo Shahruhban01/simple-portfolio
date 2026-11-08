@@ -1,22 +1,15 @@
 {
   "name": "Ruhban Abdullah | Backend Engineer Portfolio",
   "short_name": "Ruhban",
-
   "description": "Portfolio of Ruhban Abdullah, a Backend Engineer specializing in scalable backend systems, REST APIs, real-time architectures, cloud infrastructure, Node.js, Express.js, MongoDB, MySQL, AWS, Flutter, and modern backend technologies.",
-
   "start_url": "/",
   "scope": "/",
-
   "display": "standalone",
-
   "background_color": "#000000",
   "theme_color": "#000000",
-
   "orientation": "portrait-primary",
-
   "dir": "ltr",
   "lang": "en-US",
-
   "categories": [
     "portfolio",
     "developer",
@@ -24,9 +17,7 @@
     "business",
     "software"
   ],
-
   "screenshots": [],
-
   "icons": [
     {
       "src": "/favicon-192.png",
@@ -34,7 +25,6 @@
       "type": "image/png",
       "purpose": "any"
     },
-
     {
       "src": "/favicon-512.png",
       "sizes": "512x512",
@@ -42,17 +32,12 @@
       "purpose": "maskable"
     }
   ],
-
   "shortcuts": [
     {
       "name": "View Projects",
-
       "short_name": "Projects",
-
       "description": "Explore backend engineering projects and scalable systems",
-
       "url": "/#projects",
-
       "icons": [
         {
           "src": "/favicon-192.png",
@@ -60,16 +45,11 @@
         }
       ]
     },
-
     {
       "name": "Technical Skills",
-
       "short_name": "Skills",
-
       "description": "View backend technologies, cloud infrastructure, and development skills",
-
       "url": "/#skills",
-
       "icons": [
         {
           "src": "/favicon-192.png",
@@ -77,16 +57,23 @@
         }
       ]
     },
-
     {
       "name": "Contact",
-
       "short_name": "Contact",
-
       "description": "Get in touch for backend engineering opportunities",
-
       "url": "/#contact",
-
+      "icons": [
+        {
+          "src": "/favicon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Music Library",
+      "short_name": "Music",
+      "description": "Listen to personal audio library and curated music player",
+      "url": "/music/",
       "icons": [
         {
           "src": "/favicon-192.png",
@@ -95,12 +82,8 @@
       ]
     }
   ],
-
   "related_applications": [],
-
   "prefer_related_applications": false,
-
   "iarc_rating_id": "",
-
   "offline_enabled": true
 }

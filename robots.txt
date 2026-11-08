@@ -14,6 +14,7 @@ Allow: /apple-touch-icon.png
 # Protect private admin, upload dashboard, and backend endpoints from indexing
 Disallow: /upload.html
 Disallow: /upload.js
+Disallow: /admin/
 Disallow: /api/
 
 # Canonical Sitemap

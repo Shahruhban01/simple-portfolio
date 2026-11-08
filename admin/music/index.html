@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Library Manager - Admin Dashboard</title>
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), interest-cohort=(), geolocation=()">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.developerruhban.online https://avatars.githubusercontent.com; connect-src 'self' https://api.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; media-src 'self' data: blob: https://cdn.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';">
+
+  <script>
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+    const savedTheme = localStorage.getItem("portfolio_theme");
+    if (savedTheme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  </script>
+
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png">
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="music-admin.css">
+</head>
+<body>
+  <main class="admin-music-container">
+    <header>
+      <div class="admin-nav-links">
+        <a href="../../index.html">&larr; Portfolio</a> &bull;
+        <a href="../../upload.html">Analytics &amp; Inquiries</a> &bull;
+        <a href="../../music/index.html" target="_blank">View Public Music Page ↗</a>
+      </div>
+
+      <div class="admin-header">
+        <div>
+          <h1>Music Library &amp; Audio Manager</h1>
+          <p class="subtitle" style="margin: 0;">Upload songs, manage audio metadata, organize playlists, and monitor storage.</p>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button type="button" id="admin-theme-btn" class="toolbar-btn" title="Toggle Theme">
+            <span>◐</span> Theme
+          </button>
+          <button type="button" id="admin-signout-btn" class="btn-secondary" style="display: none; padding: 5px 12px; font-size: 0.85rem;">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <hr>
+
+    <!-- 1. LOGIN VIEW (Shown when token is absent) -->
+    <section id="login-view" style="display: block; margin: 30px 0;">
+      <div class="admin-record" style="max-width: 440px; margin: 0 auto; padding: 24px;">
+        <h3 style="margin-bottom: 8px;">Restricted Admin Area</h3>
+        <p class="meta" style="margin-bottom: 16px;">Enter your admin secret token to manage portfolio music files.</p>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="admin-token-input">Admin Secret Token:</label>
+            <input type="password" id="admin-token-input" class="form-input" placeholder="Enter admin token..." required autocomplete="current-password" />
+          </div>
+          <div id="login-status" class="status-box" style="display: none; margin-bottom: 12px;"></div>
+          <button type="submit" id="login-btn" class="btn" style="width: 100%;">Authenticate</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 2. DASHBOARD VIEW (Shown when authenticated) -->
+    <section id="dashboard-view" style="display: none;">
+      <!-- Overview Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-num" id="stat-total-songs">...</div>
+          <div class="metric-label">Total Songs</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" id="stat-storage-used">...</div>
+          <div class="metric-label">Storage Used</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" id="stat-public-songs">...</div>
+          <div class="metric-label">Public Songs</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" id="stat-private-songs">...</div>
+          <div class="metric-label">Private Songs</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" id="stat-total-playlists">...</div>
+          <div class="metric-label">Playlists</div>
+        </div>
+      </div>
+
+      <!-- Admin Navigation Tabs -->
+      <nav class="admin-tabs" aria-label="Music Manager Tabs">
+        <button type="button" class="admin-tab-btn active" data-tab="upload">📤 Upload Music</button>
+        <button type="button" class="admin-tab-btn" data-tab="songs">🎵 Song Library</button>
+        <button type="button" class="admin-tab-btn" data-tab="playlists">📂 Playlists</button>
+        <button type="button" class="admin-tab-btn" data-tab="storage">📊 Storage &amp; Diagnostics</button>
+      </nav>
+
+      <!-- TAB 1: UPLOAD MUSIC -->
+      <div id="tab-upload" class="tab-panel">
+        <div class="dropzone-container" id="music-dropzone">
+          <div class="dropzone-icon">🎵</div>
+          <h3>Drag &amp; drop audio files here</h3>
+          <p class="meta" style="margin-bottom: 14px;">Supported formats: MP3, WAV, FLAC, AAC, M4A, OGG (Up to 200 MB per file)</p>
+          <input type="file" id="music-file-input" multiple accept=".mp3,.wav,.flac,.aac,.m4a,.ogg" style="display: none;" />
+          <button type="button" class="btn-secondary" id="browse-files-btn">Select Audio Files</button>
+        </div>
+
+        <!-- Staged / Uploading File Queue -->
+        <div id="upload-queue-container" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+            <h3>Files Staged for Upload</h3>
+            <button type="button" id="start-all-uploads-btn" class="btn" style="padding: 6px 14px;">Upload All</button>
+          </div>
+          <div id="upload-queue-list" class="upload-queue-list"></div>
+        </div>
+
+        <div id="upload-status-box" class="status-box" style="display: none;"></div>
+      </div>
+
+      <!-- TAB 2: SONG LIBRARY -->
+      <div id="tab-songs" class="tab-panel" style="display: none;">
+        <div class="filter-row">
+          <input type="text" id="admin-song-search" class="form-input" placeholder="Search songs..." style="max-width: 260px;" />
+          <select id="admin-visibility-filter" class="form-select" style="max-width: 150px;">
+            <option value="all">All Visibility</option>
+            <option value="public">Public Only</option>
+            <option value="private">Private Only</option>
+          </select>
+          <select id="admin-genre-filter" class="form-select" style="max-width: 160px;">
+            <option value="All">All Genres</option>
+          </select>
+          <button type="button" id="admin-refresh-songs-btn" class="btn-secondary" style="padding: 8px 12px;">↻ Refresh</button>
+        </div>
+
+        <!-- Inline Audio Preview Bar -->
+        <div id="admin-inline-preview" class="inline-preview-box" style="display: none;">
+          <span style="font-size: 0.85rem; font-weight: 600;">Previewing: <span id="preview-title" style="color: var(--accent);"></span></span>
+          <audio id="admin-preview-audio" controls style="height: 32px; flex: 1;"></audio>
+          <button type="button" id="close-preview-btn" class="btn-secondary" style="padding: 2px 8px; font-size: 0.8rem;">&times; Close</button>
+        </div>
+
+        <!-- Songs List -->
+        <div class="song-table-container" id="admin-songs-list" style="margin-top: 14px;">
+          <p class="meta" style="padding: 20px; text-align: center;">Loading songs...</p>
+        </div>
+      </div>
+
+      <!-- TAB 3: PLAYLISTS -->
+      <div id="tab-playlists" class="tab-panel" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px;">
+          <p class="meta" style="margin: 0;">Create and organize track collections.</p>
+          <button type="button" id="create-playlist-btn" class="btn" style="padding: 6px 14px;">+ New Playlist</button>
+        </div>
+
+        <div id="admin-playlists-list" class="playlist-grid">
+          <p class="meta">Loading playlists...</p>
+        </div>
+      </div>
+
+      <!-- TAB 4: STORAGE & DIAGNOSTICS -->
+      <div id="tab-storage" class="tab-panel" style="display: none;">
+        <div class="admin-record" style="margin-bottom: 20px;">
+          <h3>Cloudflare R2 Audio Storage</h3>
+          <p class="meta">Audio files are streamed directly with HTTP Range request support (206 Partial Content) without consuming server RAM.</p>
+          <div id="storage-details-box" style="margin-top: 16px;">
+            <p class="meta">Loading storage stats...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDIT METADATA MODAL -->
+    <div id="edit-song-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Edit Song Metadata</h3>
+          <button type="button" class="modal-close-btn" id="modal-close-edit">&times;</button>
+        </div>
+        <form id="edit-song-form">
+          <input type="hidden" id="edit-song-id" />
+          <div class="form-group">
+            <label for="edit-song-title">Song Title:</label>
+            <input type="text" id="edit-song-title" class="form-input" required />
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="edit-song-artist">Artist:</label>
+              <input type="text" id="edit-song-artist" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-song-album">Album:</label>
+              <input type="text" id="edit-song-album" class="form-input" />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="edit-song-genre">Genre:</label>
+              <input type="text" id="edit-song-genre" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label for="edit-song-visibility">Visibility:</label>
+              <select id="edit-song-visibility" class="form-select">
+                <option value="public">Public (Visible to everyone)</option>
+                <option value="private">Private (Admin only)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="edit-song-tags">Tags (comma separated):</label>
+            <input type="text" id="edit-song-tags" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="edit-song-desc">Description / Notes:</label>
+            <textarea id="edit-song-desc" class="form-textarea" rows="3"></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" class="btn-secondary" id="modal-cancel-edit">Cancel</button>
+            <button type="submit" class="btn">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- REPLACE COVER ART MODAL -->
+    <div id="cover-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Replace Cover Artwork</h3>
+          <button type="button" class="modal-close-btn" id="modal-close-cover">&times;</button>
+        </div>
+        <form id="cover-form">
+          <input type="hidden" id="cover-song-id" />
+          <div class="form-group">
+            <label for="cover-file-input">Select Image (JPG, PNG, WEBP):</label>
+            <input type="file" id="cover-file-input" class="form-input" accept="image/*" required />
+          </div>
+          <div id="cover-upload-progress" class="upload-progress-outer" style="display: none; margin-bottom: 12px;">
+            <div id="cover-progress-bar" class="upload-progress-inner"></div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" class="btn-secondary" id="modal-cancel-cover">Cancel</button>
+            <button type="submit" class="btn">Upload Artwork</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- CREATE / EDIT PLAYLIST MODAL -->
+    <div id="playlist-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 id="playlist-modal-title">Create Playlist</h3>
+          <button type="button" class="modal-close-btn" id="modal-close-playlist">&times;</button>
+        </div>
+        <form id="playlist-form">
+          <input type="hidden" id="playlist-modal-id" />
+          <div class="form-group">
+            <label for="playlist-name-input">Playlist Name:</label>
+            <input type="text" id="playlist-name-input" class="form-input" required />
+          </div>
+          <div class="form-group">
+            <label for="playlist-desc-input">Description:</label>
+            <textarea id="playlist-desc-input" class="form-textarea" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="playlist-visibility-input">Visibility:</label>
+            <select id="playlist-visibility-input" class="form-select">
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+          </div>
+
+          <!-- Songs Selector -->
+          <div class="form-group">
+            <label>Select Songs to Include:</label>
+            <div id="playlist-songs-selector" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; padding: 8px;">
+              <!-- Checkboxes dynamically rendered -->
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" class="btn-secondary" id="modal-cancel-playlist">Cancel</button>
+            <button type="submit" class="btn" id="playlist-submit-btn">Save Playlist</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="music-admin.js"></script>
+</body>
+</html>
+

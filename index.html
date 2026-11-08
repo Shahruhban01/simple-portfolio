@@ -19,7 +19,7 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), interest-cohort=(), geolocation=(self)">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://developerruhban.online https://cdn.developerruhban.online https://avatars.githubusercontent.com; connect-src 'self' https://api.developerruhban.online http://localhost:4000 http://127.0.0.1:4000 https://api.github.com; font-src 'self' data:; media-src 'self' data: blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://developerruhban.online https://cdn.developerruhban.online https://avatars.githubusercontent.com; connect-src 'self' https://api.developerruhban.online http://localhost:4000 http://127.0.0.1:4000 https://api.github.com; font-src 'self' data:; media-src 'self' data: blob: https://cdn.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
 
   <script>
     // Anti-clickjacking / Frame-busting protection
@@ -182,6 +182,7 @@
   </script>
 
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="music/music.css">
 </head>
 
 <body>
@@ -215,7 +216,8 @@
         <a href="#education">Education</a> &bull;
         <a href="#contact">Contact</a> &bull;
         <a href="#game" id="hire-me-link" style="color: #f43f5e; font-weight: 700;">Hire Me 🎮</a> &bull;
-        <a href="#apocalypse" id="ats-apocalypse-link" style="color: #ef4444; font-weight: 700;">ATS Apocalypse 🎯</a>
+        <a href="#apocalypse" id="ats-apocalypse-link" style="color: #ef4444; font-weight: 700;">ATS Apocalypse 🎯</a> &bull;
+        <a href="music/index.html" id="music-library-link" style="color: #10b981; font-weight: 700;">Music 🎵</a>
         <!-- <a href="upload.html">Upload</a> &bull; -->
       </nav>
 
@@ -820,6 +822,28 @@
   <script src="js/editor.js"></script>
   <script src="js/hire-game.js"></script>
   <script src="js/ats-apocalypse.js"></script>
+
+  <!-- Persistent Music Player Integration -->
+  <script type="module">
+    import { MusicApi } from "./js/music/music-api.js";
+    import { AudioEngine } from "./js/music/audio-engine.js";
+    import { QueueManager } from "./js/music/queue.js";
+    import { PlaylistManager } from "./js/music/playlists.js";
+    import { PlayerUI } from "./js/music/player-ui.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      try {
+        const lastState = localStorage.getItem("portfolio_music_last_state");
+        const savedQueue = localStorage.getItem("portfolio_music_queue");
+        if (lastState || savedQueue) {
+          const engine = new AudioEngine();
+          const queue = new QueueManager();
+          const playlists = new PlaylistManager();
+          window.portfolioPlayerUI = new PlayerUI({ engine, queue, playlists });
+        }
+      } catch (_e) {}
+    });
+  </script>
 </body>
 
 </html>

@@ -490,6 +490,15 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
     {
+      id: "music",
+      title: "Open Music Library & Player 🎵",
+      desc: "Personal music streaming player and curated playlists",
+      category: "Media",
+      action: () => {
+        window.location.href = "music/index.html";
+      },
+    },
+    {
       id: "customize",
       title: "Interactive Customization Playground",
       desc: "Drag, resize, reorder sections, and customize live styling",

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Library &amp; Web Player - Ruhban Abdullah</title>
+  <meta name="description" content="Listen to personal music collections, curated playlists, and audio releases on Ruhban Abdullah's web music player.">
+  <meta name="robots" content="index, follow">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), interest-cohort=(), geolocation=()">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.developerruhban.online https://avatars.githubusercontent.com; connect-src 'self' https://api.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; media-src 'self' data: blob: https://cdn.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';">
+
+  <script>
+    // Anti-clickjacking protection
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+    // Theme initialization to avoid flash of wrong theme
+    const savedTheme = localStorage.getItem("portfolio_theme");
+    if (savedTheme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  </script>
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="music.css">
+</head>
+<body>
+  <main class="music-page-container">
+    <header class="music-header">
+      <div class="music-header-top">
+        <p class="links" style="margin: 0;">
+          &larr; <a href="../index.html">Back to Portfolio</a>
+        </p>
+        <button type="button" id="music-theme-btn" class="toolbar-btn" title="Toggle Theme">
+          <span id="music-theme-icon">◐</span> Theme
+        </button>
+      </div>
+      <h1>Personal Music Library</h1>
+      <p class="subtitle">Personal audio collection, streaming, and listening player</p>
+      <p class="intro">
+        Browse songs, stream audio with seek support, create your listening queue, and explore curated playlists.
+      </p>
+
+      <!-- Search Field -->
+      <div class="music-search-bar">
+        <span class="music-search-icon">🔍</span>
+        <input type="text" id="music-search-input" class="music-search-input" placeholder="Search by song title, artist, album, or tags... (Press / to search)" autocomplete="off" />
+        <button type="button" id="music-search-clear" class="music-search-clear" title="Clear search">&times;</button>
+      </div>
+
+      <!-- Genre Filter Pills -->
+      <div class="music-genres-scroll" id="genres-container" aria-label="Genre Filters">
+        <button type="button" class="genre-pill active" data-genre="All">All Genres</button>
+        <!-- Populated dynamically -->
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="music-tabs" aria-label="Library Navigation Tabs">
+        <button type="button" class="music-tab-btn active" data-tab="all">🎵 All Songs</button>
+        <button type="button" class="music-tab-btn" data-tab="recent-added">⚡ Recently Added</button>
+        <button type="button" class="music-tab-btn" data-tab="favorites">❤️ Liked Songs</button>
+        <button type="button" class="music-tab-btn" data-tab="playlists">📂 Playlists</button>
+        <button type="button" class="music-tab-btn" data-tab="recents">🕒 Recently Played</button>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <section id="music-main-content">
+      <!-- Loading indicator -->
+      <div id="music-loading" style="text-align: center; padding: 40px;" class="meta">
+        Loading music library...
+      </div>
+
+      <!-- Song List View (Used for All Songs, Recently Added, Favorites, Recents) -->
+      <div id="songs-container" class="song-list-container" style="display: none;">
+        <!-- Populated dynamically -->
+      </div>
+
+      <!-- Playlists View -->
+      <div id="playlists-container" class="playlist-grid" style="display: none;">
+        <!-- Populated dynamically -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="music-empty-state" class="music-empty-state" style="display: none;">
+        <div class="music-empty-icon">🎵</div>
+        <div class="music-empty-title" id="empty-title">No songs found</div>
+        <div class="music-empty-desc" id="empty-desc">
+          No tracks have been published to the music library yet.
+        </div>
+      </div>
+    </section>
+
+    <footer style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 16px;">
+      <p class="meta" style="margin: 0; font-size: 0.82rem;">
+        &copy; Ruhban Abdullah. Personal Music Library &amp; HTML5 Streaming Architecture.
+      </p>
+    </footer>
+  </main>
+
+  <!-- Player and API Modules -->
+  <script type="module" src="music.js"></script>
+</body>
+</html>
+
