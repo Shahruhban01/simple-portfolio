@@ -264,6 +264,8 @@ window.ATSApocalypse = window.ATSApocalypse || {};
       this.boundGlobalClick = this.handleGlobalClick.bind(this);
       this.boundKeyDown = this.handleKeyDown.bind(this);
       this.boundResize = this.handleResize.bind(this);
+      this.boundTouchMove = this.handleTouchMove.bind(this);
+      this.boundTouchStart = this.handleTouchStart.bind(this);
     }
 
     init() {
@@ -358,6 +360,8 @@ window.ATSApocalypse = window.ATSApocalypse || {};
       // Start global click & aiming listeners
       window.addEventListener("mousemove", this.boundMouseMove);
       window.addEventListener("click", this.boundGlobalClick, true);
+      window.addEventListener("touchmove", this.boundTouchMove, { passive: true });
+      window.addEventListener("touchstart", this.boundTouchStart, { passive: false });
       window.addEventListener("keydown", this.boundKeyDown);
       window.addEventListener("resize", this.boundResize);
 
@@ -379,6 +383,8 @@ window.ATSApocalypse = window.ATSApocalypse || {};
 
       window.removeEventListener("mousemove", this.boundMouseMove);
       window.removeEventListener("click", this.boundGlobalClick, true);
+      window.removeEventListener("touchmove", this.boundTouchMove);
+      window.removeEventListener("touchstart", this.boundTouchStart);
       window.removeEventListener("keydown", this.boundKeyDown);
       window.removeEventListener("resize", this.boundResize);
 
@@ -915,6 +921,26 @@ window.ATSApocalypse = window.ATSApocalypse || {};
       const dx = e.clientX - this.archer.x;
       const dy = e.clientY - this.archer.y;
       this.archer.angle = Math.atan2(dy, dx);
+    }
+
+    handleTouchMove(e) {
+      if (!this.isActive || !e.touches || !e.touches[0]) return;
+      const dx = e.touches[0].clientX - this.archer.x;
+      const dy = e.touches[0].clientY - this.archer.y;
+      this.archer.angle = Math.atan2(dy, dx);
+    }
+
+    handleTouchStart(e) {
+      if (!this.isActive || !e.touches || !e.touches[0]) return;
+      if (e.target.closest("#ats-apocalypse-hud") || e.target.closest("#ats-victory-overlay")) {
+        return;
+      }
+      const touchX = e.touches[0].clientX;
+      const touchY = e.touches[0].clientY;
+      const dx = touchX - this.archer.x;
+      const dy = touchY - this.archer.y;
+      this.archer.angle = Math.atan2(dy, dx);
+      this.fireArrowTo(touchX, touchY);
     }
 
     handleGlobalClick(e) {

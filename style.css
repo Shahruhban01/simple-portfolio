@@ -921,15 +921,15 @@ button.btn-danger:hover {
 
 @media (max-width: 480px) {
   .container {
-    padding: 24px 16px;
+    padding: 20px 14px;
   }
 
   h1 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
 
   h2 {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
   }
 
   .shortcuts-grid {
@@ -941,7 +941,42 @@ button.btn-danger:hover {
   }
 
   .nav-toolbar {
-    margin-top: 12px;
+    margin-top: 10px;
+    gap: 4px;
+  }
+
+  .toolbar-btn {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    min-height: 36px;
+    touch-action: manipulation;
+  }
+
+  .editor-inspector {
+    right: 8px;
+    left: 8px;
+    width: auto;
+    bottom: 8px;
+    top: auto;
+    max-height: 55vh;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .ats-hud-container {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    max-width: calc(100vw - 16px);
+    padding: 8px 10px;
+  }
+
+  .ats-hud-stats {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ats-hud-bar-group {
+    font-size: 0.72rem;
   }
 }
 
@@ -2177,6 +2212,9 @@ body.customization-active [data-custom-id].editor-selected>.editor-drag-handle {
     /* Hide side cards on small screens to give full focus to canvas */
   }
 
+  .touch-controls {
+    display: flex !important;
+  }
 }
 
 /* ==========================================================================

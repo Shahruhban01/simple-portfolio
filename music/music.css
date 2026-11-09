@@ -993,9 +993,22 @@ body.has-music-player {
    RESPONSIVE DESIGN (Mobile & Tablet)
    ========================================================================= */
 
+/* Safe area support for notched and gesture-based mobile screens */
+.music-player-bar {
+  padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
+}
+
+body.has-music-player {
+  padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
 @media (max-width: 768px) {
+  .music-page-container {
+    padding: 16px 14px 130px;
+  }
+
   .player-track-info {
-    width: 50%;
+    width: 45%;
   }
 
   .player-right-controls {
@@ -1003,7 +1016,7 @@ body.has-music-player {
   }
 
   .player-volume-wrapper {
-    display: none; /* Hide volume slider on mobile; hardware buttons are used */
+    display: none; /* Hardware volume buttons used on mobile */
   }
 
   .player-time-display {
@@ -1018,17 +1031,337 @@ body.has-music-player {
     display: none;
   }
 
-  .song-artist-album {
-    font-size: 0.75rem;
-  }
-
-  .music-page-container {
-    padding: 16px 12px 130px;
-  }
-
   .playlist-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 12px;
+  }
+}
+
+/* Dedicated Mobile Mini-Player, Expanded Player & Touch Controls (<= 640px) */
+@media (max-width: 640px) {
+  .music-page-container {
+    padding: 14px 10px 120px;
+  }
+
+  /* Compact Floating Mini-Player */
+  .player-bar-content {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .player-track-info {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .player-thumb-wrapper {
+    width: 42px;
+    height: 42px;
+    border-radius: 6px;
+  }
+
+  .player-track-title {
+    font-size: 0.88rem;
+    max-width: 100%;
+  }
+
+  .player-track-artist {
+    font-size: 0.74rem;
+    max-width: 100%;
+  }
+
+  /* Favorite button on mini player */
+  #player-fav-btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+    touch-action: manipulation;
+  }
+
+  /* Center Controls: keep Play/Pause and Next track button */
+  .player-center-controls {
+    flex-shrink: 0;
+  }
+
+  .player-buttons-row {
+    gap: 4px;
+  }
+
+  #ctrl-shuffle,
+  #ctrl-prev,
+  #ctrl-repeat,
+  .player-time-display {
+    display: none !important;
+  }
+
+  .player-ctrl-btn.btn-play-main {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    min-height: 46px;
+    touch-action: manipulation;
+  }
+
+  .player-ctrl-btn#ctrl-next {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Right Controls: hide desktop volume slider & speed, show queue button */
+  .player-right-controls {
+    width: auto;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  #ctrl-speed-btn,
+  .player-volume-wrapper,
+  #ctrl-expand-toggle {
+    display: none !important;
+  }
+
+  #ctrl-queue-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+    touch-action: manipulation;
+  }
+
+  /* Scrubber Line touch optimization */
+  .player-scrubber-wrapper {
+    height: 5px;
+    touch-action: none;
+  }
+
+  /* Fullscreen / Expanded Mobile Player Sheet */
+  .music-expanded-player {
+    padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(24px, env(safe-area-inset-bottom, 0px));
+    justify-content: space-between;
+  }
+
+  .expanded-player-header {
+    margin-bottom: 8px;
+    padding: 4px 0;
+  }
+
+  .btn-close-expanded {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    font-size: 1.8rem;
+  }
+
+  .btn-queue-expanded {
+    min-height: 40px;
+    padding: 6px 14px;
+    touch-action: manipulation;
+  }
+
+  .expanded-artwork-container {
+    max-width: min(72vw, 270px);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .expanded-title {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .expanded-artist {
+    font-size: 0.92rem;
+  }
+
+  .expanded-album {
+    font-size: 0.8rem;
+  }
+
+  .expanded-scrubber-box {
+    margin-top: 4px;
+    touch-action: none;
+  }
+
+  .expanded-scrubber {
+    height: 8px;
+  }
+
+  .expanded-controls-row {
+    gap: 16px;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .player-ctrl-btn.btn-play-large {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    touch-action: manipulation;
+  }
+
+  .player-ctrl-btn#expanded-ctrl-prev,
+  .player-ctrl-btn#expanded-ctrl-next,
+  .player-ctrl-btn#expanded-ctrl-shuffle,
+  .player-ctrl-btn#expanded-ctrl-repeat {
+    min-width: 46px;
+    min-height: 46px;
+    touch-action: manipulation;
+  }
+
+  .expanded-secondary-row {
+    padding: 0 8px;
+  }
+
+  .expanded-secondary-row button {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Full-width Queue Drawer on Mobile */
+  .music-queue-panel {
+    width: 100vw;
+    max-width: 100vw;
+    border-left: none;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .queue-item {
+    min-height: 52px;
+    padding: 10px 12px;
+  }
+
+  .btn-queue-action {
+    min-width: 42px;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  /* Single-Column Song Rows on Mobile */
+  .song-row {
+    padding: 8px 10px;
+    gap: 10px;
+  }
+
+  .song-cover-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+
+  .song-title {
+    font-size: 0.88rem;
+  }
+
+  .song-artist-album {
+    font-size: 0.74rem;
+  }
+
+  .song-duration {
+    font-size: 0.75rem;
+    width: 36px;
+  }
+
+  .song-action-btn {
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  .song-meta-col {
+    gap: 4px;
+  }
+
+  .music-search-bar {
+    margin: 12px 0;
+  }
+
+  .music-search-input {
+    font-size: 0.9rem;
+    padding: 9px 12px 9px 34px;
+  }
+
+  .music-genres-scroll {
+    gap: 6px;
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .genre-pill {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    min-height: 36px;
+    touch-action: manipulation;
+  }
+
+  .music-tabs {
+    gap: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .music-tab-btn {
+    padding: 8px 12px;
+    font-size: 0.84rem;
+    min-height: 40px;
+    touch-action: manipulation;
+  }
+}
+
+/* Extra-Small Mobile Devices (320px - 360px) */
+@media (max-width: 360px) {
+  .music-page-container {
+    padding: 10px 8px 115px;
+  }
+
+  .player-bar-content {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .player-thumb-wrapper {
+    width: 36px;
+    height: 36px;
+  }
+
+  .player-track-title {
+    font-size: 0.82rem;
+  }
+
+  .player-track-artist {
+    font-size: 0.7rem;
+  }
+
+  .song-cover-wrapper {
+    width: 38px;
+    height: 38px;
+  }
+
+  .song-row {
+    padding: 6px 8px;
+    gap: 8px;
+  }
+
+  .expanded-artwork-container {
+    max-width: min(65vw, 220px);
+  }
+
+  .expanded-controls-row {
+    gap: 8px;
   }
 }
 

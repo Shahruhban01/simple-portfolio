@@ -21,6 +21,95 @@ export class AudioEngine {
 
     this._loadPreferences();
     this._attachMediaEvents();
+    this._setupMediaSession();
+  }
+
+  _setupMediaSession() {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+
+    try {
+      navigator.mediaSession.setActionHandler("play", () => this.play());
+      navigator.mediaSession.setActionHandler("pause", () => this.pause());
+      navigator.mediaSession.setActionHandler("previoustrack", () => this._emit("previoustrack"));
+      navigator.mediaSession.setActionHandler("nexttrack", () => this._emit("nexttrack"));
+      navigator.mediaSession.setActionHandler("seekto", (details) => {
+        if (details.seekTime !== undefined) {
+          this.seek(details.seekTime);
+        }
+      });
+      navigator.mediaSession.setActionHandler("seekbackward", (details) => {
+        const offset = details.seekOffset || 10;
+        this.seekRelative(-offset);
+      });
+      navigator.mediaSession.setActionHandler("seekforward", (details) => {
+        const offset = details.seekOffset || 10;
+        this.seekRelative(offset);
+      });
+      navigator.mediaSession.setActionHandler("stop", () => {
+        this.pause();
+        this.seek(0);
+      });
+    } catch (e) {
+      console.warn("MediaSession handler registration notice:", e);
+    }
+  }
+
+  _updateMediaSessionMetadata(song) {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator) || !song) return;
+
+    try {
+      const coverUrl = song.coverArtUrl || (window.MusicApi ? window.MusicApi.getCoverUrl(song._id || song.id) : "");
+      const artwork = [];
+      if (coverUrl) {
+        artwork.push(
+          { src: coverUrl, sizes: "96x96", type: "image/jpeg" },
+          { src: coverUrl, sizes: "128x128", type: "image/jpeg" },
+          { src: coverUrl, sizes: "192x192", type: "image/jpeg" },
+          { src: coverUrl, sizes: "256x256", type: "image/jpeg" },
+          { src: coverUrl, sizes: "512x512", type: "image/jpeg" }
+        );
+      } else {
+        artwork.push(
+          { src: "/favicon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "/favicon-512.png", sizes: "512x512", type: "image/png" }
+        );
+      }
+
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: song.title || "Personal Track",
+        artist: song.artist || "Ruhban Abdullah",
+        album: song.album || "Personal Music Library",
+        artwork,
+      });
+    } catch (e) {
+      console.warn("MediaSession metadata update notice:", e);
+    }
+  }
+
+  _updateMediaSessionPlaybackState(state) {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+    try {
+      navigator.mediaSession.playbackState = state;
+    } catch (_e) {}
+  }
+
+  _updateMediaSessionPositionState() {
+    if (
+      typeof navigator === "undefined" ||
+      !("mediaSession" in navigator) ||
+      !("setPositionState" in navigator.mediaSession)
+    ) {
+      return;
+    }
+    try {
+      if (this.duration > 0 && !isNaN(this.currentTime) && isFinite(this.duration)) {
+        navigator.mediaSession.setPositionState({
+          duration: Math.max(0, this.duration),
+          playbackRate: this.playbackRate || 1.0,
+          position: Math.max(0, Math.min(this.duration, this.currentTime)),
+        });
+      }
+    } catch (_e) {}
   }
 
   _loadPreferences() {
@@ -63,6 +152,7 @@ export class AudioEngine {
     this.audio.addEventListener("loadedmetadata", () => {
       this.duration = this.audio.duration || (this.currentSong?.duration || 0);
       this.isLoading = false;
+      this._updateMediaSessionPositionState();
       this._emit("loadedmetadata", {
         duration: this.duration,
         currentTime: this.audio.currentTime,
@@ -76,12 +166,20 @@ export class AudioEngine {
 
     this.audio.addEventListener("play", () => {
       this.isPlaying = true;
+      this._updateMediaSessionPlaybackState("playing");
+      this._updateMediaSessionPositionState();
       this._emit("play", this.currentSong);
     });
 
     this.audio.addEventListener("pause", () => {
       this.isPlaying = false;
+      this._updateMediaSessionPlaybackState("paused");
       this._emit("pause", this.currentSong);
+    });
+
+    this.audio.addEventListener("seeked", () => {
+      this._updateMediaSessionPositionState();
+      this._emit("seeked", { currentTime: this.audio.currentTime });
     });
 
     this.audio.addEventListener("timeupdate", () => {
@@ -213,6 +311,7 @@ export class AudioEngine {
     }
 
     this._emit("trackloaded", song);
+    this._updateMediaSessionMetadata(song);
 
     if (autoplay) {
       return this.play();

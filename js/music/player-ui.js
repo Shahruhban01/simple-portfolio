@@ -520,6 +520,10 @@ export class PlayerUI {
     this.elements.nextBtn.addEventListener("click", handleNext);
     this.elements.expandedNextBtn.addEventListener("click", handleNext);
 
+    // MediaSession lock-screen action bindings
+    this.engine.on("previoustrack", handlePrev);
+    this.engine.on("nexttrack", handleNext);
+
     // Shuffle
     const handleShuffle = () => this.queue.toggleShuffle();
     this.elements.shuffleBtn.addEventListener("click", handleShuffle);
@@ -573,6 +577,29 @@ export class PlayerUI {
       this.toggleExpandedPlayer(true);
     });
     this.elements.closeExpandedBtn.addEventListener("click", () => this.toggleExpandedPlayer(false));
+
+    // Mobile Swipe-Down to dismiss expanded player
+    let touchStartY = 0;
+    let touchStartX = 0;
+    if (this.elements.modalPlayer) {
+      this.elements.modalPlayer.addEventListener("touchstart", (e) => {
+        if (e.touches && e.touches[0]) {
+          touchStartY = e.touches[0].clientY;
+          touchStartX = e.touches[0].clientX;
+        }
+      }, { passive: true });
+
+      this.elements.modalPlayer.addEventListener("touchend", (e) => {
+        if (e.changedTouches && e.changedTouches[0]) {
+          const deltaY = e.changedTouches[0].clientY - touchStartY;
+          const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+          // If swiped down at least 70px with minimal horizontal drift
+          if (deltaY > 70 && deltaX < 80) {
+            this.toggleExpandedPlayer(false);
+          }
+        }
+      }, { passive: true });
+    }
 
     // Interactive Scrubber (Mouse & Touch)
     this._setupScrubber(this.elements.scrubberWrapper);

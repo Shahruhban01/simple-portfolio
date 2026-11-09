@@ -342,19 +342,108 @@
 }
 
 @media (max-width: 768px) {
+  .admin-music-container {
+    padding: 16px 14px 60px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 16px 0 20px;
+  }
+
+  .metric-card {
+    padding: 12px;
+  }
+
+  .metric-num {
+    font-size: 1.5rem;
+  }
+
   .form-grid-2 {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .admin-song-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    padding: 12px;
   }
 
   .admin-actions-col {
     width: 100%;
     justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-actions-col button {
+    min-height: 38px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-music-container {
+    padding: 12px 10px 50px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .admin-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .admin-nav-links {
+    font-size: 0.8rem;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .admin-tabs {
+    gap: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-tab-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    min-height: 40px;
+  }
+
+  .dropzone-container {
+    padding: 24px 14px;
+  }
+
+  .dropzone-icon {
+    font-size: 2.2rem;
+  }
+
+  .upload-queue-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .upload-queue-title {
+    font-size: 0.88rem;
+    word-break: break-all;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-box {
+    padding: 16px;
+    width: 100%;
+    max-height: 94vh;
   }
 }
 
