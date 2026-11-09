@@ -1,0 +1,15 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/music",
+      "destination": "/music/index.html"
+    },
+    {
+      "source": "/admin/music",
+      "destination": "/admin/music/index.html"
+    }
+  ]
+}
+

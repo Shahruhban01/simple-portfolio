@@ -427,23 +427,45 @@ async function uploadMultipartFile(item) {
       const end = Math.min(item.file.size, start + partSize);
       const chunkBlob = item.file.slice(start, end);
 
-      let chunkRes;
-      try {
-        // Attempt upload to presigned URL
-        chunkRes = await MusicApi.uploadChunk({
-          url: p.presignedUrl,
-          blob: chunkBlob,
-          onProgress: (loaded) => updateProgress(loaded, partOffset),
-          abortSignal: item.controller.signal,
-        });
-      } catch (directErr) {
-        // If direct preflight failed, stream chunk through backend proxy
-        chunkRes = await MusicApi.uploadChunk({
-          url: p.proxyUrl,
-          blob: chunkBlob,
-          onProgress: (loaded) => updateProgress(loaded, partOffset),
-          abortSignal: item.controller.signal,
-        });
+      let chunkRes = null;
+      let lastErr = null;
+
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        if (item.controller.signal.aborted) throw new DOMException("Aborted", "AbortError");
+
+        try {
+          // 1. Attempt direct presigned R2 upload
+          chunkRes = await MusicApi.uploadChunk({
+            url: p.presignedUrl,
+            blob: chunkBlob,
+            onProgress: (loaded) => updateProgress(loaded, partOffset),
+            abortSignal: item.controller.signal,
+          });
+          break; // Succeeded!
+        } catch (directErr) {
+          lastErr = directErr;
+          console.warn(`Direct R2 upload part ${p.partNumber} attempt ${attempt} notice: ${directErr.message}. Attempting streaming endpoint...`);
+
+          try {
+            // 2. Fallback to streaming chunk through backend API
+            chunkRes = await MusicApi.uploadChunk({
+              url: p.proxyUrl,
+              blob: chunkBlob,
+              token: adminToken,
+              contentType: "application/octet-stream",
+              onProgress: (loaded) => updateProgress(loaded, partOffset),
+              abortSignal: item.controller.signal,
+            });
+            break; // Succeeded via proxy!
+          } catch (proxyErr) {
+            lastErr = proxyErr;
+            console.warn(`Streaming part ${p.partNumber} attempt ${attempt} notice: ${proxyErr.message}`);
+          }
+        }
+      }
+
+      if (!chunkRes || !chunkRes.etag) {
+        throw lastErr || new Error(`Failed to upload part ${p.partNumber} after retries.`);
       }
 
       completedParts.push({
@@ -466,12 +488,26 @@ async function uploadMultipartFile(item) {
         mimeType: item.coverFile.type,
         isCover: true,
       });
-      await MusicApi.uploadChunk({
-        url: coverInit.presignedUrl,
-        blob: item.coverFile,
-        contentType: item.coverFile.type,
-        abortSignal: item.controller.signal,
-      });
+      try {
+        await MusicApi.uploadChunk({
+          url: coverInit.presignedUrl,
+          blob: item.coverFile,
+          contentType: item.coverFile.type,
+          token: adminToken,
+          abortSignal: item.controller.signal,
+        });
+      } catch (coverErr) {
+        console.warn("Cover direct upload notice:", coverErr.message, "Attempting proxy...");
+        if (coverInit.proxyUrl) {
+          await MusicApi.uploadChunk({
+            url: coverInit.proxyUrl,
+            blob: item.coverFile,
+            contentType: item.coverFile.type,
+            token: adminToken,
+            abortSignal: item.controller.signal,
+          });
+        }
+      }
       coverKey = coverInit.storageKey;
     }
 
@@ -882,14 +918,32 @@ function setupModals() {
         isCover: true,
       });
 
-      await MusicApi.uploadChunk({
-        url: init.presignedUrl,
-        blob: file,
-        contentType: file.type,
-        onProgress: (loaded, total) => {
-          progressBar.style.width = `${Math.round((loaded / total) * 100)}%`;
-        },
-      });
+      try {
+        await MusicApi.uploadChunk({
+          url: init.presignedUrl,
+          blob: file,
+          contentType: file.type,
+          token: adminToken,
+          onProgress: (loaded, total) => {
+            progressBar.style.width = `${Math.round((loaded / total) * 100)}%`;
+          },
+        });
+      } catch (directCoverErr) {
+        console.warn("Direct cover upload failed, falling back to proxy:", directCoverErr.message);
+        if (init.proxyUrl) {
+          await MusicApi.uploadChunk({
+            url: init.proxyUrl,
+            blob: file,
+            contentType: file.type,
+            token: adminToken,
+            onProgress: (loaded, total) => {
+              progressBar.style.width = `${Math.round((loaded / total) * 100)}%`;
+            },
+          });
+        } else {
+          throw directCoverErr;
+        }
+      }
 
       await MusicApi.updateSong(adminToken, songId, {
         coverKey: init.storageKey,

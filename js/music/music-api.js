@@ -173,13 +173,30 @@ export const MusicApi = {
   },
 
   /**
-   * Admin Step 2: Upload chunk directly or via streaming part endpoint with byte-level progress
+   * Admin Step 2: Upload chunk directly to R2 or via streaming part endpoint with byte-level progress
    */
-  uploadChunk({ url, blob, contentType = "application/octet-stream", onProgress, abortSignal }) {
+  uploadChunk({ url, blob, contentType = "application/octet-stream", token, onProgress, abortSignal }) {
     return new Promise((resolve, reject) => {
+      if (!url) {
+        return reject(new Error("Upload URL is required."));
+      }
+
+      // Ensure relative URLs are resolved against API_BASE_URL (never static Vercel origin)
+      const targetUrl = (url.startsWith("http://") || url.startsWith("https://"))
+        ? url
+        : `${this.baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+
       const xhr = new XMLHttpRequest();
-      xhr.open("PUT", url);
-      if (contentType) {
+      xhr.open("PUT", targetUrl);
+
+      // If uploading to our backend API proxy, attach Authorization header
+      const isBackendApi = targetUrl.includes("/api/admin/") || targetUrl.startsWith(this.baseUrl);
+      if (isBackendApi && token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      }
+
+      // For backend proxy or explicit non-R2 requests, set Content-Type
+      if (contentType && !targetUrl.includes("r2.cloudflarestorage.com")) {
         xhr.setRequestHeader("Content-Type", contentType);
       }
 
@@ -200,7 +217,7 @@ export const MusicApi = {
 
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          // Extract ETag from response headers
+          // Extract ETag from response headers or response body
           let etag = xhr.getResponseHeader("ETag") || xhr.getResponseHeader("etag");
           if (!etag) {
             try {
@@ -210,11 +227,19 @@ export const MusicApi = {
           }
           resolve({ etag, status: xhr.status });
         } else {
-          reject(new Error(`Chunk upload failed with status ${xhr.status}`));
+          let errMsg = `Chunk upload failed with status ${xhr.status}`;
+          try {
+            const parsed = JSON.parse(xhr.responseText);
+            if (parsed.message) errMsg += `: ${parsed.message}`;
+          } catch (_e) {}
+          reject(new Error(errMsg));
         }
       };
 
-      xhr.onerror = () => reject(new Error("Network error during chunk upload"));
+      xhr.onerror = () => {
+        reject(new Error(`Network error during chunk upload to ${targetUrl.slice(0, 80)}...`));
+      };
+
       xhr.send(blob);
     });
   },
