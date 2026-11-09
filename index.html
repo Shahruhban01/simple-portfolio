@@ -182,7 +182,7 @@
   </script>
 
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="music/music.css">
+  <link rel="stylesheet" href="/music/music.css">
 </head>
 
 <body>
@@ -217,7 +217,7 @@
         <a href="#contact">Contact</a> &bull;
         <a href="#game" id="hire-me-link" style="color: #f43f5e; font-weight: 700;">Hire Me 🎮</a> &bull;
         <a href="#apocalypse" id="ats-apocalypse-link" style="color: #ef4444; font-weight: 700;">ATS Apocalypse 🎯</a> &bull;
-        <a href="music/index.html" id="music-library-link" style="color: #10b981; font-weight: 700;">Music 🎵</a>
+        <a href="/music/" id="music-library-link" style="color: #10b981; font-weight: 700;">Music 🎵</a>
         <!-- <a href="upload.html">Upload</a> &bull; -->
       </nav>
 
@@ -825,23 +825,29 @@
 
   <!-- Persistent Music Player Integration -->
   <script type="module">
-    import { MusicApi } from "./js/music/music-api.js";
-    import { AudioEngine } from "./js/music/audio-engine.js";
-    import { QueueManager } from "./js/music/queue.js";
-    import { PlaylistManager } from "./js/music/playlists.js";
-    import { PlayerUI } from "./js/music/player-ui.js";
+    import { MusicApi } from "/js/music/music-api.js";
+    import { AudioEngine } from "/js/music/audio-engine.js";
+    import { QueueManager } from "/js/music/queue.js";
+    import { PlaylistManager } from "/js/music/playlists.js";
+    import { PlayerUI } from "/js/music/player-ui.js";
+    import { PageNavigator } from "/js/music/page-navigator.js";
 
     document.addEventListener("DOMContentLoaded", () => {
       try {
-        const lastState = localStorage.getItem("portfolio_music_last_state");
-        const savedQueue = localStorage.getItem("portfolio_music_queue");
-        if (lastState || savedQueue) {
+        if (!window.portfolioNavigator) {
+          window.portfolioNavigator = new PageNavigator();
+        }
+        if (!window.sharedAudioPlayer) {
           const engine = new AudioEngine();
           const queue = new QueueManager();
           const playlists = new PlaylistManager();
-          window.portfolioPlayerUI = new PlayerUI({ engine, queue, playlists });
+          const playerUI = new PlayerUI({ engine, queue, playlists });
+          window.sharedAudioPlayer = { engine, queue, playlists, playerUI };
+          window.portfolioPlayerUI = playerUI;
         }
-      } catch (_e) {}
+      } catch (err) {
+        console.warn("Music player initialization notice:", err);
+      }
     });
   </script>
 </body>

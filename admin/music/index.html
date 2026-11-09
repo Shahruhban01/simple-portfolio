@@ -8,7 +8,7 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), interest-cohort=(), geolocation=()">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.developerruhban.online https://avatars.githubusercontent.com; connect-src 'self' https://api.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; media-src 'self' data: blob: https://cdn.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://vercel.live; style-src 'self' 'unsafe-inline' https://vercel.live; img-src 'self' data: blob: https://cdn.developerruhban.online https://avatars.githubusercontent.com; connect-src 'self' https://api.developerruhban.online http://localhost:4000 http://127.0.0.1:4000 https://vercel.live https://*.vercel.live; media-src 'self' data: blob: https://cdn.developerruhban.online http://localhost:4000 http://127.0.0.1:4000; font-src 'self' data:; frame-src https://vercel.live; object-src 'none'; base-uri 'self'; form-action 'self';">
 
   <script>
     if (window.top !== window.self) {
@@ -20,18 +20,19 @@
     }
   </script>
 
-  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png">
-  <link rel="stylesheet" href="../../style.css">
-  <link rel="stylesheet" href="music-admin.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/admin/music/music-admin.css">
 </head>
 <body>
   <main class="admin-music-container">
     <header>
       <div class="admin-nav-links">
-        <a href="../../index.html">&larr; Portfolio</a> &bull;
-        <a href="../../upload.html">Analytics &amp; Inquiries</a> &bull;
-        <a href="../../music/index.html" target="_blank">View Public Music Page ↗</a>
+        <a href="/">&larr; Portfolio</a> &bull;
+        <a href="/upload.html">Analytics &amp; Inquiries</a> &bull;
+        <a href="/music/" target="_blank">View Public Music Page ↗</a>
       </div>
 
       <div class="admin-header">
@@ -295,7 +296,7 @@
     </div>
   </main>
 
-  <script type="module" src="music-admin.js"></script>
+  <script type="module" src="/admin/music/music-admin.js"></script>
 </body>
 </html>
 

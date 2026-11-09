@@ -1,7 +1,7 @@
 // Admin Music Manager Logic for Ruhban Abdullah Portfolio
 // Real-Time Direct Cloudflare R2 S3-Compatible Multipart Uploads & Audio Governance
 
-import { MusicApi } from "../../js/music/music-api.js";
+import { MusicApi } from "/js/music/music-api.js";
 
 // State
 let adminToken = "";

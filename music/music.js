@@ -1,11 +1,11 @@
 // Public Music Page Logic for Ruhban Abdullah Portfolio
 
-import { MusicApi } from "../js/music/music-api.js";
-import { AudioEngine } from "../js/music/audio-engine.js";
-import { QueueManager } from "../js/music/queue.js";
-import { PlaylistManager } from "../js/music/playlists.js";
-import { PlayerUI, formatTime } from "../js/music/player-ui.js";
-import { PageNavigator } from "../js/music/page-navigator.js";
+import { MusicApi } from "/js/music/music-api.js";
+import { AudioEngine } from "/js/music/audio-engine.js";
+import { QueueManager } from "/js/music/queue.js";
+import { PlaylistManager } from "/js/music/playlists.js";
+import { PlayerUI, formatTime } from "/js/music/player-ui.js";
+import { PageNavigator } from "/js/music/page-navigator.js";
 
 // Global instances
 let engine;
