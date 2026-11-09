@@ -413,7 +413,45 @@ export class PlayerUI {
 
     this.engine.on("error", ({ message }) => {
       console.warn("Player notification:", message);
+      this.showToast(message, true);
     });
+
+    this.engine.on("autoplayblocked", ({ message }) => {
+      this.showToast(message, false);
+    });
+  }
+
+  showToast(message, isError = false) {
+    let toast = document.getElementById("music-player-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "music-player-toast";
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 84px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(17, 24, 39, 0.95);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.1);
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      `;
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.borderColor = isError ? "#ef4444" : "rgba(255,255,255,0.1)";
+    toast.style.color = isError ? "#fca5a5" : "#fff";
+    toast.style.opacity = "1";
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => {
+      toast.style.opacity = "0";
+    }, 4000);
   }
 
   _bindQueueEvents() {
